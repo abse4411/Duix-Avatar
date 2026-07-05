@@ -5,8 +5,8 @@ const isDev = process.env.NODE_ENV === 'development'
 const isWin = process.platform === 'win32'
 
 export const serviceUrl = {
-  face2face: isDev ? 'http://192.168.4.204:8383/easy' : 'http://127.0.0.1:8383/easy',
-  tts: isDev ? 'http://192.168.4.204:18180' : 'http://127.0.0.1:18180'
+  face2face: 'http://127.0.0.1:8383/easy',
+  tts: 'http://127.0.0.1:18180'
 }
 
 export const assetPath = {

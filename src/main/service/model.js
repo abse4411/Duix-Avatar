@@ -39,12 +39,7 @@ async function addModel(modelName, videoPath) {
   return extractAudio(modelPath, audioPath).then(() => {
     // 训练语音模型
     const relativeAudioPath = path.relative(assetPath.ttsRoot, audioPath)
-    if (process.env.NODE_ENV === 'development') {
-      // TODO 写死调试
-      return trainVoice('origin_audio/test.wav', 'zh')
-    } else {
-      return trainVoice(relativeAudioPath, 'zh')
-    }
+    return trainVoice(relativeAudioPath, 'zh')
   }).then((voiceId)=>{
     // 插入模特信息
     const relativeModelPath = path.relative(assetPath.model, modelPath)
@@ -56,6 +51,32 @@ async function addModel(modelName, videoPath) {
   })
 }
 
+/**
+ * 新增模特（无音频视频）
+ * 仅上传无声视频作为形象模特，不分离音频、不训练 TTS。
+ * 后续合成视频时需由用户自行上传音频驱动，从而跳过 TTS 服务。
+ * @param {string} modelName 模特名称
+ * @param {string} videoPath 模特视频路径（无音频或含音频均可，仅取画面）
+ * @returns {number} 新增模特 id
+ */
+async function addModelNoAudio(modelName, videoPath) {
+  if (!fs.existsSync(assetPath.model)) {
+    fs.mkdirSync(assetPath.model, { recursive: true })
+  }
+  // copy video to model video path and convert to h264
+  const extname = path.extname(videoPath)
+  const modelFileName = dayjs().format('YYYYMMDDHHmmssSSS') + extname
+  const modelPath = path.join(assetPath.model, modelFileName)
+
+  await toH264(videoPath, modelPath)
+
+  // 不分离音频、不训练 TTS，audio_path 与 voice_id 留空
+  const relativeModelPath = path.relative(assetPath.model, modelPath)
+  const id = insert({ modelName, videoPath: relativeModelPath, audioPath: null, voiceId: null })
+  log.info('~ addModelNoAudio ~ model saved:', modelPath)
+  return id
+}
+
 function page({ page, pageSize, name = '' }) {
   const total = count(name)
   return {
@@ -63,7 +84,7 @@ function page({ page, pageSize, name = '' }) {
     list: selectPage({ page, pageSize, name }).map((model) => ({
       ...model,
       video_path: path.join(assetPath.model, model.video_path),
-      audio_path: path.join(assetPath.ttsRoot, model.audio_path)
+      audio_path: model.audio_path ? path.join(assetPath.ttsRoot, model.audio_path) : null
     }))
   }
 }
@@ -73,7 +94,7 @@ function findModel(modelId) {
   return {
     ...model,
     video_path: path.join(assetPath.model, model.video_path),
-    audio_path: path.join(assetPath.ttsRoot, model.audio_path)
+    audio_path: model.audio_path ? path.join(assetPath.ttsRoot, model.audio_path) : null
   }
 }
 
@@ -103,6 +124,9 @@ function countModel(name = '') {
 export function init() {
   ipcMain.handle(MODEL_NAME + '/addModel', (event, ...args) => {
     return addModel(...args)
+  })
+  ipcMain.handle(MODEL_NAME + '/addModelNoAudio', (event, ...args) => {
+    return addModelNoAudio(...args)
   })
   ipcMain.handle(MODEL_NAME + '/page', (event, ...args) => {
     return page(...args)

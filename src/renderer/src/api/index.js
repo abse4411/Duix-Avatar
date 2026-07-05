@@ -45,6 +45,10 @@ export function addModel({ name, videoPath }) {
   return window.electron.ipcRenderer.invoke('model/addModel', name, videoPath)
 }
 
+export function addModelNoAudio({ name, videoPath }) {
+  return window.electron.ipcRenderer.invoke('model/addModelNoAudio', name, videoPath)
+}
+
 export function countModel(name = '') {
   return window.electron.ipcRenderer.invoke('model/count', name)
 }

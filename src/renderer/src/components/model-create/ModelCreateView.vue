@@ -23,7 +23,7 @@ import { reactive, watchEffect, ref } from 'vue'
 import ModalBox from './ModalBox.vue'
 import ModalFinished from '../ModalFinished.vue'
 import { isBoolean, isObject } from 'lodash-es'
-import { addModel } from '@renderer/api'
+import { addModel, addModelNoAudio } from '@renderer/api'
 import { MessagePlugin } from 'tdesign-vue-next'
 const props = defineProps({
   visible: {
@@ -51,7 +51,8 @@ const state = reactive({
     uploadInfo: {
       videoPath: ''
     },
-    name: ''
+    name: '',
+    mode: 'noaudio'
   }
 })
 
@@ -75,9 +76,10 @@ const action = {
   async submit() {
     if (!action.check()) return
     state.loading.submit = true
-    const { name, uploadInfo } = state.form
+    const { name, uploadInfo, mode } = state.form
     try {
-      const isOK = await addModel({
+      const api = mode === 'noaudio' ? addModelNoAudio : addModel
+      const isOK = await api({
         name,
         videoPath: uploadInfo.videoPath
       })
