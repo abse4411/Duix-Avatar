@@ -4,7 +4,7 @@
       <img class="logo" src="@renderer/assets/images/icons/logo.png" alt="logo" />
     </div>
     <div class="header-right">
-      <t-dropdown :maxColumnWidth="false" :min-column-width="88" panel-top-content="" placement="bottom-right"
+      <t-dropdown :min-column-width="88" panel-top-content="" placement="bottom-right"
         @click="action.clickHandler">
         <div class="header-right-item" style="width: 70px">
           <img src="@renderer/assets/images/icons/setting.svg" alt="setting" />
