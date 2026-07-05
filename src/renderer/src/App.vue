@@ -6,6 +6,7 @@ import Agreement from '@renderer/components/agreement.vue'
 import { watch, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useHomeStore } from '@renderer/stores/home.js'
+import { useThemeStore } from '@renderer/stores/theme.js'
 import { useI18n } from 'vue-i18n'
 import { getContext, saveContext } from '@renderer/api/index.js'
 import { agreementKey, lang_ } from '@renderer/utils/const.js'
@@ -13,6 +14,7 @@ import { agreementKey, lang_ } from '@renderer/utils/const.js'
 const { locale } = useI18n()
 const unRoute = useRoute()
 const home = useHomeStore()
+const theme = useThemeStore()
 const isShowMenu = ref(false)
 watch(
   () => unRoute.path,
@@ -21,6 +23,7 @@ watch(
   }
 )
 onMounted(() => {
+  theme.init()
   const language = localStorage.getItem('language')
   if (language && language !== 'null') {
     locale.value = language
@@ -86,14 +89,11 @@ const getContextAjax = async () => {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-  /* 轨道的背景颜色 */
+  background-color: var(--app-scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #d3d3d3;
-  /* 滑块的颜色 */
+  background-color: var(--app-scrollbar-thumb);
   border-radius: 5px;
-  /* 滑块的圆角 */
 }
 </style>

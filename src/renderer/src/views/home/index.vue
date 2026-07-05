@@ -148,13 +148,13 @@ const countTotal = async () => {
 .home-content-box {
   height: calc(100vh - 60px);
   padding: 20px;
-  background-color: #f4f4f6;
+  background-color: var(--app-bg-page);
   overflow: auto;
 
   .form-list-content-box {
     padding: 16px;
     border-radius: 8px;
-    background-color: #fff;
+    background-color: var(--app-bg-surface);
 
     .list-data {
       position: relative;
@@ -169,7 +169,7 @@ const countTotal = async () => {
         font-family: HarmonyOS Sans SC, HarmonyOS Sans SC;
         font-weight: 500;
         font-size: 16px;
-        color: #696f7a;
+        color: var(--app-text-2);
         line-height: 22px;
         margin-right: 34px;
         position: relative;
@@ -177,7 +177,7 @@ const countTotal = async () => {
 
         .total {
           font-size: 12px;
-          color: #696f7a;
+          color: var(--app-text-2);
         }
 
         .line-box {
@@ -198,13 +198,13 @@ const countTotal = async () => {
       }
 
       .active {
-        color: #000000 !important;
+        color: var(--app-text-1) !important;
         font-weight: bold !important;
 
         .total {
           font-weight: bold !important;
           font-size: 12px !important;
-          color: #000000 !important;
+          color: var(--app-text-1) !important;
         }
 
         .line {

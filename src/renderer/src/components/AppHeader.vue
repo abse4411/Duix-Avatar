@@ -22,7 +22,7 @@
             <t-dropdown-menu v-if="item.children">
               <t-dropdown-item v-for="(itemChildren, indexChildren) in item.children"
                 :key="indexChildren + 'itemChildren'" :value="itemChildren.value"
-                :class="itemChildren.value === home.homeState.language ? 'language-active' : ''">{{ itemChildren.content
+                :class="action.isChildActive(item, itemChildren) ? 'language-active' : ''">{{ itemChildren.content
                 }}</t-dropdown-item>
             </t-dropdown-menu>
           </t-dropdown-item>
@@ -52,11 +52,13 @@
 import { reactive, watch } from 'vue'
 import { Client } from '@renderer/client'
 import { useHomeStore } from '@renderer/stores/home.js'
+import { useThemeStore } from '@renderer/stores/theme.js'
 import { useI18n } from 'vue-i18n'
 import { saveContext } from '@renderer/api/index.js'
 import { lang_ } from '@renderer/utils/const.js'
 const { locale, t } = useI18n()
 const home = useHomeStore()
+const theme = useThemeStore()
 const state = reactive({
   isMaximized: false,
   menuList: [
@@ -84,6 +86,23 @@ const state = reactive({
           content: '英文',
           key: 'common.setting.languageSwitch.languageEnText',
           value: 'en'
+        }
+      ]
+    },
+    {
+      content: '主题切换',
+      value: 'themeSwitch',
+      key: 'common.setting.tab.themeSwitchText',
+      children: [
+        {
+          content: '浅色',
+          key: 'common.setting.themeSwitch.lightText',
+          value: 'light'
+        },
+        {
+          content: '深色',
+          key: 'common.setting.themeSwitch.darkText',
+          value: 'dark'
         }
       ]
     }
@@ -117,13 +136,20 @@ const action = {
       home.setAgreementVisible(true)
     } else if (value === 'openLog') {
       Client.app.openLog()
+    } else if (value === 'light' || value === 'dark') {
+      theme.setMode(value)
     } else {
-      if (value === 'languageSwitch') return
+      if (value === 'languageSwitch' || value === 'themeSwitch') return
       window.localStorage.setItem('language', value)
       locale.value = value
       saveContextAjax(value)
       home.setLanguage(value)
     }
+  },
+  isChildActive(item, child) {
+    if (item.value === 'languageSwitch') return child.value === home.homeState.language
+    if (item.value === 'themeSwitch') return child.value === theme.themeState.mode
+    return false
   }
 }
 const saveContextAjax = async (lang) => {
@@ -165,11 +191,11 @@ const saveContextAjax = async (lang) => {
   top: 0;
   left: 0;
   align-items: center;
-  background-color: #fff;
+  background-color: var(--app-bg-surface);
   -webkit-app-region: drag;
   -webkit-user-select: none;
   z-index: 999;
-  box-shadow: inset 0px -1px 0px 0px #f2f2f4;
+  box-shadow: inset 0px -1px 0px 0px var(--app-border);
 
   &-left {
     width: 100%;
@@ -197,14 +223,14 @@ const saveContextAjax = async (lang) => {
       border-radius: 4px;
 
       &:hover {
-        background-color: #f2f2f4;
+        background-color: var(--app-bg-surface-hover);
       }
 
       &-text {
         font-family: PingFang SC, PingFang SC;
         font-weight: 400;
         font-size: 12px;
-        color: #000000;
+        color: var(--app-text-1);
         line-height: 14px;
         text-align: left;
       }

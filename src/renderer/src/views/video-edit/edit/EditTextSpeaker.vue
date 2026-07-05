@@ -212,18 +212,18 @@ action.init()
     text-align: center;
     padding: 40px 20px;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--app-text-3);
   }
 
   &-search {
     flex: none;
     padding: 16px 12px;
-    --td-bg-color-specialcomponent: #1d1e20;
-    --td-text-color-primary: #ffffff;
-    --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+    --td-bg-color-specialcomponent: var(--app-bg-surface);
+    --td-text-color-primary: var(--app-text-1);
+    --td-text-color-placeholder: var(--app-text-2);
 
     :deep(.t-input) {
-      border-color: rgba(255, 255, 255, 0.6);
+      border-color: var(--app-border);
     }
 
     :deep(.t-input--focused) {
@@ -240,7 +240,7 @@ action.init()
   &-box__item {
     width: 100%;
     height: 72px;
-    background: #27292D;
+    background: var(--app-bg-elevated);
     margin-bottom: 12px;
     border-radius: 4px 4px 4px 4px;
     border: 1px solid transparent;
@@ -274,7 +274,7 @@ action.init()
     .name {
       font-weight: 500;
       font-size: 14px;
-      color: #FFFFFF;
+      color: var(--app-text-1);
       line-height: 22px;
       display: -webkit-box;
       -webkit-box-orient: vertical;

@@ -74,10 +74,10 @@ const action = {
     font-weight: 500;
     padding: 18px;
     font-size: 14px;
-    color: #ffffff;
+    color: var(--app-text-1);
     line-height: 22px;
     text-align: center;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid var(--app-border);
   }
 
   &-body {
@@ -92,12 +92,12 @@ const action = {
     &-search {
       flex: none;
       margin-bottom: 21px;
-      --td-bg-color-specialcomponent: #1d1e20;
-      --td-text-color-primary: #ffffff;
-      --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+      --td-bg-color-specialcomponent: var(--app-bg-surface);
+      --td-text-color-primary: var(--app-text-1);
+      --td-text-color-placeholder: var(--app-text-2);
 
       :deep(.t-input) {
-        border-color: rgba(255, 255, 255, 0.6);
+        border-color: var(--app-border);
       }
 
       :deep(.t-input--focused) {
@@ -113,9 +113,9 @@ const action = {
     &-create {
       width: 100%;
       height: 238px;
-      background: #17181a;
+      background: var(--app-bg-input);
       border-radius: 4px 4px 4px 4px;
-      border: 1px solid #27292d;
+      border: 1px solid var(--app-bg-elevated);
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -130,9 +130,9 @@ const action = {
       }
 
       .btn {
-        background: #27292d;
+        background: var(--app-bg-elevated);
         font-size: 12px;
-        color: #ffffff;
+        color: var(--app-text-1);
         border: none;
       }
     }
@@ -140,9 +140,9 @@ const action = {
     &-list__item {
       width: 100%;
       height: 238px;
-      background: #17181a;
+      background: var(--app-bg-input);
       border-radius: 4px 4px 4px 4px;
-      border: 1px solid #27292d;
+      border: 1px solid var(--app-bg-elevated);
       margin-top: 21px;
       padding: 12px;
       display: flex;
@@ -162,7 +162,7 @@ const action = {
       .name {
         width: 90%;
         font-size: 14px;
-        color: #ffffff;
+        color: var(--app-text-1);
         line-height: 22px;
         text-align: center;
         white-space: nowrap;

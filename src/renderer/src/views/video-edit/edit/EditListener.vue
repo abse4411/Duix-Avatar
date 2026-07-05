@@ -163,14 +163,14 @@ defineExpose({
     position: relative;
     padding: 26px 38px 26px 20px;
     height: 100%;
-    color: #fff;
-    box-shadow: inset 0px 1px 0px 0px #000000;
+    color: var(--app-text-1);
+    box-shadow: inset 0px 1px 0px 0px var(--app-border);
   }
 
   &-close {
     width: 20px;
     height: 20px;
-    color: #fff;
+    color: var(--app-text-1);
     cursor: pointer;
     font-size: 16px;
     position: absolute;
@@ -206,7 +206,7 @@ defineExpose({
         width: 70%;
         font-weight: 400;
         font-size: 14px;
-        color: #FFFFFF;
+        color: var(--app-text-1);
         line-height: 16px;
         white-space: nowrap;
         /* 保持文本在一行显示 */
@@ -219,7 +219,7 @@ defineExpose({
       .duration {
         font-weight: 400;
         font-size: 12px;
-        color: #DDDDE9;
+        color: var(--app-text-2);
         line-height: 14px;
       }
     }

@@ -76,9 +76,9 @@ defineExpose({
 </script>
 <style lang="less" scoped>
 .finished {
-  --td-text-color-primary: #ffffff;
-  --td-bg-color-specialcomponent: #1d1e20;
-  --td-bg-color-secondarycontainer: #161718;
+  --td-text-color-primary: var(--app-text-1);
+  --td-bg-color-specialcomponent: var(--app-bg-surface);
+  --td-bg-color-secondarycontainer: var(--app-bg-input);
 
   :deep(.t-dialog__position) {
     align-items: center;
@@ -90,11 +90,11 @@ defineExpose({
     width: 560px;
     overflow: hidden;
     height: 380px;
-    background: #1d1e20;
+    background: var(--app-bg-surface);
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
     border-radius: 4px 4px 4px 4px;
-    border: 1px solid #3f4041;
-    color: #ffffff;
+    border: 1px solid var(--app-border);
+    color: var(--app-text-1);
     display: flex;
     flex-direction: column;
   }
@@ -105,10 +105,10 @@ defineExpose({
   }
 
   :deep(.t-dialog__close) {
-    color: #ffffff;
+    color: var(--app-text-1);
 
     &:hover {
-      background-color: #373739;
+      background-color: var(--app-bg-surface-hover);
     }
   }
 
@@ -125,7 +125,7 @@ defineExpose({
     .title {
       font-weight: 500;
       font-size: 24px;
-      color: #ffffff;
+      color: var(--app-text-1);
       line-height: 28px;
     }
 
@@ -139,7 +139,7 @@ defineExpose({
       margin-top: 20px;
       font-weight: 500;
       font-size: 16px;
-      color: #ffffff;
+      color: var(--app-text-1);
       line-height: 19px;
     }
 
@@ -147,7 +147,7 @@ defineExpose({
       margin-top: 8px;
       font-weight: 400;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--app-text-2);
       line-height: 14px;
 
       span {
@@ -162,8 +162,8 @@ defineExpose({
       gap: 32px;
 
       .btn.tosee {
-        color: rgba(255, 255, 255, 0.9);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--app-text-1);
+        border: 1px solid var(--app-border);
 
         &:hover {
           color: var(--td-brand-color-hover);

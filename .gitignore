@@ -4,6 +4,4 @@ out
 .idea
 .DS_Store
 *.log*
-error.txt
-history_*.md
 .codebuddy/

@@ -278,7 +278,7 @@ defineExpose({
         .empty-text {
           font-size: 12px;
           text-align: center;
-          color: #999999;
+          color: var(--app-text-3);
           line-height: 16px;
           margin-top: 8px;
           span {
@@ -302,7 +302,7 @@ defineExpose({
         border-radius: 8px;
         position: relative;
         cursor: pointer;
-        border: 1px solid #f2f2f4;
+        border: 1px solid var(--app-border);
 
         &:hover {
           transform: scale(1.01);
@@ -413,7 +413,7 @@ defineExpose({
           left: 0;
           width: 100%;
           height: 65px;
-          background: #ffffff;
+          background: var(--app-bg-surface);
           .top {
             display: flex;
             align-items: center;
@@ -431,7 +431,7 @@ defineExpose({
             .h1 {
               font-weight: 600;
               font-size: 14px;
-              color: #252525;
+              color: var(--app-text-1);
               line-height: 23px;
               overflow: hidden;
               text-overflow: ellipsis;
@@ -440,7 +440,7 @@ defineExpose({
           }
           .text {
             font-size: 12px;
-            color: rgba(37, 37, 37, 0.5);
+            color: var(--app-text-2);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -458,7 +458,7 @@ defineExpose({
     width: 100%;
     bottom: -20px;
     left: 0;
-    background-color: #fff;
+    background-color: var(--app-bg-surface);
     .pagination-content {
       justify-content: center;
       display: flex;

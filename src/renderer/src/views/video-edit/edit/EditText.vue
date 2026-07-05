@@ -130,10 +130,10 @@ const action = {
   &-popup {
     width: 412px;
     height: 400px;
-    background: #1D1E20;
+    background: var(--app-bg-surface);
     box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.5);
     border-radius: 4px 4px 4px 4px;
-    border: 1px solid #393A3B;
+    border: 1px solid var(--app-border);
     margin-bottom: 12px !important;
 
     .t-popup__content {
@@ -141,7 +141,7 @@ const action = {
       border: none;
       box-shadow: none;
       height: 100%;
-      color: #ffffff;
+      color: var(--app-text-1);
       padding: 0;
     }
   }
@@ -154,7 +154,7 @@ const action = {
 
   &-content {
     height: 100%;
-    --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+    --td-text-color-placeholder: var(--app-text-2);
     padding-bottom: 84px;
 
     :deep(textarea) {
@@ -163,7 +163,7 @@ const action = {
       font-size: 12px;
       min-height: unset;
       padding: 12px;
-      color: rgba(255, 255, 255, 0.9);
+      color: var(--app-text-1);
       line-height: 20px;
       resize: none;
     }
@@ -187,14 +187,14 @@ const action = {
         text-align: center;
         padding: 5px 0;
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.55);
+        color: var(--app-text-2);
         cursor: pointer;
         border-radius: 4px;
-        background: #27292D;
+        background: var(--app-bg-elevated);
         transition: all 0.2s;
 
         &:hover {
-          color: #ffffff;
+          color: var(--app-text-1);
         }
 
         &.active {
@@ -219,7 +219,7 @@ const action = {
     }
 
     .speaker {
-      --td-text-color-primary: #fff;
+      --td-text-color-primary: var(--app-text-1);
 
       &-content {
         display: flex;
@@ -229,7 +229,7 @@ const action = {
         .label {
           font-weight: 500;
           font-size: 12px;
-          color: #FFFFFF;
+          color: var(--app-text-1);
           line-height: 18px;
           white-space: nowrap;
         }
@@ -238,13 +238,13 @@ const action = {
           width: 88px;
           height: 30px;
           border-radius: 4px 4px 4px 4px;
-          border: 1px solid #2E3033;
+          border: 1px solid var(--app-border);
           --td-brand-color-focus: transparent;
-          --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+          --td-text-color-placeholder: var(--app-text-2);
 
           :deep(.t-input) {
             background-color: transparent;
-            color: #fff;
+            color: var(--app-text-1);
             font-weight: 400;
             font-size: 12px;
             height: 30px;
@@ -256,7 +256,7 @@ const action = {
             }
 
             svg {
-              color: #ffffff;
+              color: var(--app-text-1);
             }
           }
         }
@@ -276,11 +276,11 @@ const action = {
     width: 68px;
     flex: none;
     padding: 20px 0 0 0;
-    background: #27292D;
+    background: var(--app-bg-elevated);
     text-align: center;
     font-weight: 400;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--app-text-3);
     line-height: 22px;
   }
 

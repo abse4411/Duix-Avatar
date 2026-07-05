@@ -417,7 +417,7 @@ defineExpose({
 
 <style lang="less" scoped>
 .preset-form {
-  color: #ffffff;
+  color: var(--app-text-1);
 
   .form-section {
     margin-bottom: 24px;
@@ -442,7 +442,7 @@ defineExpose({
       flex: none;
       width: 80px;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--app-text-2);
       line-height: 30px;
       text-align: right;
 
@@ -454,10 +454,10 @@ defineExpose({
 
     .value {
       flex: 1;
-      --td-text-color-primary: #ffffff;
-      --td-text-color-placeholder: rgba(255, 255, 255, 0.4);
-      --td-bg-color-container: #161718;
-      --td-border-level-2-color: #2e3033;
+      --td-text-color-primary: var(--app-text-1);
+      --td-text-color-placeholder: var(--app-text-3);
+      --td-bg-color-container: var(--app-bg-input);
+      --td-border-level-2-color: var(--app-border);
     }
   }
 
@@ -469,13 +469,13 @@ defineExpose({
       align-items: center;
       gap: 8px;
       padding: 6px 12px;
-      background: #161718;
+      background: var(--app-bg-input);
       border-radius: 4px;
-      border: 1px solid #2e3033;
+      border: 1px solid var(--app-border);
 
       .audio-name {
         font-size: 12px;
-        color: #ffffff;
+        color: var(--app-text-1);
         flex: 1;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -484,7 +484,7 @@ defineExpose({
 
       .audio-duration {
         font-size: 11px;
-        color: rgba(255, 255, 255, 0.4);
+        color: var(--app-text-3);
       }
 
       .audio-play-icon {
@@ -514,7 +514,7 @@ defineExpose({
         height: 64px;
         object-fit: cover;
         border-radius: 4px;
-        border: 1px solid #2e3033;
+        border: 1px solid var(--app-border);
       }
 
       .cover-actions {
@@ -526,7 +526,7 @@ defineExpose({
 
     .upload-tip {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--app-text-3);
       margin-top: 6px;
     }
   }
@@ -550,7 +550,7 @@ defineExpose({
         flex: none;
         width: 36px;
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
+        color: var(--app-text-2);
       }
 
       .v-slider {
@@ -561,7 +561,7 @@ defineExpose({
         flex: none;
         width: 32px;
         font-size: 11px;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--app-text-3);
         text-align: right;
       }
     }
@@ -577,7 +577,7 @@ defineExpose({
       flex: none;
       width: 36px;
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--app-text-2);
       text-align: right;
     }
   }
@@ -590,7 +590,7 @@ defineExpose({
 
     .audition-tip {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.4);
+      color: var(--app-text-3);
     }
   }
 
@@ -608,7 +608,7 @@ defineExpose({
         flex: none;
         width: 130px;
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
+        color: var(--app-text-2);
       }
     }
   }
@@ -616,22 +616,22 @@ defineExpose({
   :deep(.t-radio-group) {
     --td-brand-color: #434af9;
     --td-bg-color-container-select: #434af9;
-    --td-bg-color-secondarycontainer: #161718;
-    background: #161718;
+    --td-bg-color-secondarycontainer: var(--app-bg-input);
+    background: var(--app-bg-input);
     padding: 4px;
     border-radius: 4px;
 
     .t-radio-button {
       border-radius: 4px;
       background: transparent;
-      color: rgba(255, 255, 255, 0.65);
+      color: var(--app-text-2);
       font-size: 12px;
       border: none;
       box-shadow: none;
 
       &:hover {
-        color: #ffffff;
-        background: rgba(255, 255, 255, 0.06);
+        color: var(--app-text-1);
+        background: var(--app-bg-surface-hover);
       }
 
       &.t-is-checked {
@@ -642,23 +642,23 @@ defineExpose({
   }
 
   :deep(.t-checkbox) {
-    color: rgba(255, 255, 255, 0.85);
-    --td-text-color-primary: #ffffff;
+    color: var(--app-text-1);
+    --td-text-color-primary: var(--app-text-1);
 
     .t-checkbox__label {
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--app-text-1);
     }
   }
 
   :deep(.t-button--theme-default) {
-    background-color: #27292D;
-    color: rgba(255, 255, 255, 0.85);
-    border-color: #2e3033;
-    --td-bg-color-container: #27292D;
+    background-color: var(--app-bg-elevated);
+    color: var(--app-text-1);
+    border-color: var(--app-border);
+    --td-bg-color-container: var(--app-bg-elevated);
 
     &:hover {
-      background-color: #34363a;
-      color: #ffffff;
+      background-color: var(--app-bg-surface-active);
+      color: var(--app-text-1);
       border-color: #434af9;
     }
   }
@@ -669,7 +669,7 @@ defineExpose({
 
     .t-collapse-panel__header {
       font-size: 14px;
-      color: #ffffff;
+      color: var(--app-text-1);
       font-weight: 500;
       padding-left: 8px;
       border-left: 3px solid #434af9;
@@ -681,7 +681,7 @@ defineExpose({
   }
 
   :deep(.t-slider__rail) {
-    background: #2e3033;
+    background: var(--app-border);
   }
 }
 </style>

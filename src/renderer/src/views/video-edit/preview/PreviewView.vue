@@ -20,17 +20,17 @@ defineProps({
   display: flex;
   height: 100%;
   flex-direction: column;
-  border-left: 1px solid #000000;
-  border-right: 1px solid #000000;
+  border-left: 1px solid var(--app-border);
+  border-right: 1px solid var(--app-border);
 
   &-header {
     font-weight: 500;
     padding: 18px;
     font-size: 14px;
-    color: #ffffff;
+    color: var(--app-text-1);
     line-height: 22px;
     text-align: center;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid var(--app-border);
   }
 
   &-body {
@@ -41,7 +41,7 @@ defineProps({
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #161718;
+    background-color: var(--app-bg-input);
     padding: 40px;
     overflow: hidden;
 

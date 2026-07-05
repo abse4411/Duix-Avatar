@@ -1,7 +1,71 @@
-:root {
+/* ========== 主题 CSS 变量 ========== */
+
+:root,
+:root[data-theme="light"] {
+  --app-bg-page: #f4f4f6;
+  --app-bg-surface: #ffffff;
+  --app-bg-surface-hover: #f2f2f4;
+  --app-bg-surface-active: #e8e8ea;
+  --app-bg-input: #ffffff;
+  --app-bg-elevated: #f2f2f4;
+  --app-border: #ebedf0;
+  --app-text-1: #000000;
+  --app-text-2: #696f7a;
+  --app-text-3: #9097a5;
+  --app-scrollbar-track: #f1f1f1;
+  --app-scrollbar-thumb: #d3d3d3;
+
+  --td-bg-color-page: #f4f4f6;
+  --td-bg-color-container: #ffffff;
+  --td-bg-color-secondarycontainer: #f2f2f4;
+  --td-bg-color-specialcomponent: #ffffff;
+  --td-bg-color-mediumcontainer: #f2f2f4;
+  --td-bg-color-component: #ffffff;
+  --td-bg-color-hover: #f2f2f4;
+  --td-text-color-primary: rgba(0, 0, 0, 0.9);
+  --td-text-color-secondary: rgba(0, 0, 0, 0.6);
+  --td-text-color-placeholder: rgba(0, 0, 0, 0.4);
+  --td-text-color-disabled: rgba(0, 0, 0, 0.26);
+  --td-text-color-inverse: #ffffff;
+  --td-border-level-1-color: #ebedf0;
+  --td-border-level-2-color: #ebedf0;
+  --td-component-stroke: #ebedf0;
+  --td-component-border: #ebedf0;
+
   --td-brand-color-hover: #5f64fd !important;
   --td-brand-color: #434af9 !important;
   --td-brand-color-active: #434af9 !important;
-
   --td-radius-default: 4px !important;
+}
+
+:root[data-theme="dark"] {
+  --app-bg-page: #141516;
+  --app-bg-surface: #1d1e20;
+  --app-bg-surface-hover: #27292D;
+  --app-bg-surface-active: #34363a;
+  --app-bg-input: #161718;
+  --app-bg-elevated: #27292D;
+  --app-border: #2e3033;
+  --app-text-1: #ffffff;
+  --app-text-2: rgba(255, 255, 255, 0.6);
+  --app-text-3: rgba(255, 255, 255, 0.3);
+  --app-scrollbar-track: #1d1e20;
+  --app-scrollbar-thumb: #3f4041;
+
+  --td-bg-color-page: #141516;
+  --td-bg-color-container: #1d1e20;
+  --td-bg-color-secondarycontainer: #27292D;
+  --td-bg-color-specialcomponent: #1d1e20;
+  --td-bg-color-mediumcontainer: #27292D;
+  --td-bg-color-component: #1d1e20;
+  --td-bg-color-hover: #27292D;
+  --td-text-color-primary: #ffffff;
+  --td-text-color-secondary: rgba(255, 255, 255, 0.6);
+  --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+  --td-text-color-disabled: rgba(255, 255, 255, 0.26);
+  --td-text-color-inverse: #1d1e20;
+  --td-border-level-1-color: #2e3033;
+  --td-border-level-2-color: #2e3033;
+  --td-component-stroke: #2e3033;
+  --td-component-border: #2e3033;
 }

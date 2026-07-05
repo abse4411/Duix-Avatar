@@ -319,7 +319,7 @@ const downloadVideo = async (video) => {
           font-weight: 400;
           font-size: 12px;
           text-align: center;
-          color: #999999;
+          color: var(--app-text-3);
           line-height: 16px;
           span {
             color: #434af9;
@@ -538,16 +538,16 @@ const downloadVideo = async (video) => {
           padding: 4px 8px 8px 8px;
           left: 0;
           width: 100%;
-          background: #ffffff;
-          border-bottom: 1px solid #f2f2f4;
-          border-left: 1px solid #f2f2f4;
-          border-right: 1px solid #f2f2f4;
+          background: var(--app-bg-surface);
+          border-bottom: 1px solid var(--app-border);
+          border-left: 1px solid var(--app-border);
+          border-right: 1px solid var(--app-border);
           border-radius: 0 0 8px 8px;
           .h1 {
             font-family: HarmonyOS Sans SC, HarmonyOS Sans SC;
             font-weight: 600;
             font-size: 14px;
-            color: #252525;
+            color: var(--app-text-1);
             line-height: 28px;
             white-space: nowrap;
             overflow: hidden;
@@ -558,7 +558,7 @@ const downloadVideo = async (video) => {
             font-weight: 400;
             margin-top: 5px;
             font-size: 10px;
-            color: rgba(37, 37, 37, 0.5);
+            color: var(--app-text-2);
             line-height: 12px;
             white-space: nowrap;
             overflow: hidden;
@@ -620,7 +620,7 @@ const downloadVideo = async (video) => {
     width: 100%;
     bottom: -20px;
     left: 0;
-    background-color: #fff;
+    background-color: var(--app-bg-surface);
     .pagination-content {
       justify-content: center;
       display: flex;

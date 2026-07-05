@@ -267,19 +267,19 @@ const tabClick = (index) => {
       font-family: HarmonyOS Sans SC, HarmonyOS Sans SC;
       font-weight: 500;
       font-size: 13px;
-      color: #696f7a;
+      color: var(--app-text-2);
       line-height: 14px;
       margin-right: 14px;
       position: relative;
       padding-bottom: 10px;
     }
     .active {
-      color: #000000 !important;
+      color: var(--app-text-1) !important;
       font-weight: bold !important;
       .total {
         font-weight: bold !important;
         font-size: 12px !important;
-        color: #000000 !important;
+        color: var(--app-text-1) !important;
       }
       .line {
         display: block !important;
@@ -304,7 +304,7 @@ const tabClick = (index) => {
           font-weight: 400;
           font-size: 12px;
           text-align: center;
-          color: #999999;
+          color: var(--app-text-3);
           line-height: 16px;
           span {
             color: #434af9;
@@ -438,7 +438,7 @@ const tabClick = (index) => {
         border-radius: 8px;
         position: relative;
         cursor: pointer;
-        border: 1px solid #f2f2f4;
+        border: 1px solid var(--app-border);
 
         .download-preview {
           display: none;
@@ -515,7 +515,7 @@ const tabClick = (index) => {
           left: 0;
           width: 100%;
           height: 65px;
-          background: #ffffff;
+          background: var(--app-bg-surface);
           .top {
             display: flex;
             margin-top: 5px;
@@ -541,7 +541,7 @@ const tabClick = (index) => {
               font-family: HarmonyOS Sans SC, HarmonyOS Sans SC;
               font-weight: 600;
               font-size: 14px;
-              color: #252525;
+              color: var(--app-text-1);
               line-height: 23px;
               margin-left: 4px;
             }
@@ -568,7 +568,7 @@ const tabClick = (index) => {
     width: 100%;
     bottom: -20px;
     left: 0;
-    background-color: #fff;
+    background-color: var(--app-bg-surface);
     .pagination-content {
       justify-content: center;
       display: flex;

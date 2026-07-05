@@ -88,11 +88,11 @@ const action = {
     display: flex;
     align-items: center;
     font-size: 14px;
-    color: #ffffff;
+    color: var(--app-text-1);
     gap: 6px;
     cursor: pointer;
     padding-right: 20px;
-    border-right: 1px solid rgba(255, 255, 255, 0.25);
+    border-right: 1px solid var(--app-border);
     -webkit-app-region: no-drag;
 
     .icon {
@@ -109,14 +109,14 @@ const action = {
 
     .input {
       width: 300px;
-      --td-bg-color-specialcomponent: #1d1e20;
-      --td-text-color-primary: #ffffff;
-      --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+      --td-bg-color-specialcomponent: var(--app-bg-surface);
+      --td-text-color-primary: var(--app-text-1);
+      --td-text-color-placeholder: var(--app-text-2);
       --td-bg-color-container-hover: transparent;
       -webkit-app-region: no-drag;
 
       :deep(.t-input) {
-        border-color: rgba(255, 255, 255, 0.6);
+        border-color: var(--app-border);
       }
 
       :deep(.t-input--focused) {
@@ -127,13 +127,13 @@ const action = {
     .name {
       font-weight: 600;
       font-size: 14px;
-      color: #ffffff;
+      color: var(--app-text-1);
       line-height: 16px;
       -webkit-app-region: no-drag;
     }
 
     .icon {
-      color: #888899;
+      color: var(--app-text-3);
       cursor: pointer;
       font-size: 16px;
       -webkit-app-region: no-drag;

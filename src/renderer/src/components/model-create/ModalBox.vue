@@ -59,10 +59,10 @@ const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
     }
 
     :deep(.t-input) {
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--app-border);
       box-shadow: none;
       font-size: 12px;
-      color: #ffffff;
+      color: var(--app-text-1);
     }
 
     &.--mode {
@@ -70,14 +70,14 @@ const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
       gap: 12px;
 
       .label {
-        color: #ffffff;
+        color: var(--app-text-1);
         font-size: 12px;
       }
 
       .value {
         flex: none;
         padding: 4px;
-        background: #161718;
+        background: var(--app-bg-input);
         border-radius: 6px;
         --td-brand-color: #434af9;
         --td-bg-color-container-select: #434af9;
@@ -85,7 +85,7 @@ const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
         :deep(.t-radio-button) {
           border-radius: 4px;
           background: transparent;
-          color: rgba(255, 255, 255, 0.55);
+          color: var(--app-text-2);
           font-size: 12px;
           line-height: 22px;
           border: none;
@@ -93,7 +93,7 @@ const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
         }
 
         :deep(.t-radio-button:hover) {
-          color: #ffffff;
+          color: var(--app-text-1);
         }
 
         :deep(.t-radio-button.t-is-checked) {
@@ -115,7 +115,7 @@ const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
 
     &.--name {
       width: 37%;
-      --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+      --td-text-color-placeholder: var(--app-text-2);
     }
 
     &.--upload {

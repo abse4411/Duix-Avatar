@@ -68,7 +68,7 @@ const action = {
     justify-content: center;
     align-items: center;
     height: 100%;
-    background: #161718;
+    background: var(--app-bg-input);
     border-radius: 8px;
 
     &.--unupload {

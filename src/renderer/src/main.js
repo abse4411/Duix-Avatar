@@ -7,5 +7,7 @@ import App from './App.vue'
 import i18n from "./i18n/index.js";
 // 引入组件库的少量全局样式变量
 import 'tdesign-vue-next/es/style/index.css'
+// 主题变量覆盖，必须在 TDesign CSS 之后加载
+import './assets/theme.css'
 
 createApp(App).use(router).use(createPinia()).use(TDesign).use(i18n).mount('#app')

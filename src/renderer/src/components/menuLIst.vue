@@ -66,7 +66,7 @@ const handleClick = (item) => {
 <style lang="less" scoped>
 .menu-list {
   width: 76px;
-  background: #fff;
+  background: var(--app-bg-surface);
   position: fixed;
   left: 0;
   top: 0;
@@ -98,7 +98,7 @@ const handleClick = (item) => {
         font-family: PingFang SC, PingFang SC;
         font-weight: 400;
         font-size: 12px;
-        color: #9097a5;
+        color: var(--app-text-3);
         line-height: 14px;
         margin-top: 3px;
       }

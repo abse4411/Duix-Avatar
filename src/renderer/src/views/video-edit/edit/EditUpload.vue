@@ -104,14 +104,14 @@ const action = {
     align-items: center;
     gap: 16px;
     --td-bg-color-secondarycontainer: transparent;
-    --td-bg-color-specialcomponent: #1d1e20;
-    --td-text-color-primary: #ffffff;
-    --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
+    --td-bg-color-specialcomponent: var(--app-bg-surface);
+    --td-text-color-primary: var(--app-text-1);
+    --td-text-color-placeholder: var(--app-text-2);
 
     .btn {
       flex: none;
       height: 28px;
-      background: #3D4045;
+      background: var(--app-bg-elevated);
       border-radius: 4px 4px 4px 4px;
       border: none;
       font-weight: 500;
@@ -139,11 +139,11 @@ const action = {
   }
 
   &-uploaded {
-    color: #ffffff;
+    color: var(--app-text-1);
     padding: 12px;
     width: 100%;
     height: 90px;
-    background: #191A1B;
+    background: var(--app-bg-input);
     border-radius: 4px 4px 4px 4px;
     display: flex;
     flex-direction: column;
@@ -155,7 +155,7 @@ const action = {
       gap: 6px;
       font-weight: 400;
       font-size: 12px;
-      color: #FFFFFF;
+      color: var(--app-text-1);
       line-height: 20px;
 
       .tag {
@@ -179,7 +179,7 @@ const action = {
         margin-left: 6px;
         font-weight: 400;
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.3);
+        color: var(--app-text-3);
         line-height: 14px;
       }
 

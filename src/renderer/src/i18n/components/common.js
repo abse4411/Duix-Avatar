@@ -136,11 +136,16 @@ export const commonZh = {
     tab: {
       userAgreementText: '用户协议',
       languageSwitchText: '语言切换',
+      themeSwitchText: '主题切换',
       openLogText: '打开日志'
     },
     languageSwitch: {
       languageEnText: '英文',
       languageZhText: '中文'
+    },
+    themeSwitch: {
+      lightText: '浅色',
+      darkText: '深色'
     }
   }
 }
@@ -276,12 +281,17 @@ export const commonEn = {
     title: 'Setting',
     tab: {
       userAgreementText: 'User Agreement',
-      languageSwitchText: 'Language switch',
+      languageSwitchText: 'Language',
+      themeSwitchText: 'Theme',
       openLogText: 'Open Log'
     },
     languageSwitch: {
       languageEnText: 'English',
       languageZhText: 'Chinese'
+    },
+    themeSwitch: {
+      lightText: 'Light',
+      darkText: 'Dark'
     }
   }
 }

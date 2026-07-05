@@ -112,9 +112,9 @@ const action = {
 </script>
 <style lang="less" scoped>
 .modal {
-  --td-text-color-primary: #ffffff;
-  --td-bg-color-specialcomponent: #1d1e20;
-  --td-bg-color-secondarycontainer: #161718;
+  --td-text-color-primary: var(--app-text-1);
+  --td-bg-color-specialcomponent: var(--app-bg-surface);
+  --td-bg-color-secondarycontainer: var(--app-bg-input);
 
   :deep(.t-dialog__position) {
     align-items: center;
@@ -127,11 +127,11 @@ const action = {
     max-width: 1080px;
     overflow: hidden;
     max-height: 86vh;
-    background: #1d1e20;
+    background: var(--app-bg-surface);
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
     border-radius: 4px 4px 4px 4px;
-    border: 1px solid #3f4041;
-    color: #ffffff;
+    border: 1px solid var(--app-border);
+    color: var(--app-text-1);
     display: flex;
     flex-direction: column;
   }
@@ -140,26 +140,26 @@ const action = {
     padding: 16px;
     font-weight: 500;
     font-size: 14px;
-    color: #ffffff;
+    color: var(--app-text-1);
     line-height: 16px;
   }
 
   :deep(.t-dialog__close) {
-    color: #ffffff;
+    color: var(--app-text-1);
 
     &:hover {
-      background-color: #373739;
+      background-color: var(--app-bg-surface-hover);
     }
   }
 
   :deep(.t-dialog__body) {
     padding: 20px 40px;
-    color: #ffffff;
+    color: var(--app-text-1);
   }
 
   :deep(.t-dialog__footer) {
     padding: 24px 40px;
-    border-top: 1px solid #000000;
+    border-top: 1px solid var(--app-border);
   }
 }
 </style>

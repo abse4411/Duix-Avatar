@@ -239,24 +239,24 @@ action.init()
 .layout {
   width: 100%;
   height: 100vh;
-  --td-bg-color-container: #1d1e20;
-  --td-bg-color-page: #1d1e20;
-  color: #ffffff;
+  --td-bg-color-container: var(--app-bg-surface);
+  --td-bg-color-page: var(--app-bg-page);
+  color: var(--app-text-1);
 
   :deep(.t-loading__text) {
-    color: #ffffff;
+    color: var(--app-text-1);
   }
 
   :deep(.t-loading__gradient-conic) {
     background: conic-gradient(from 90deg at 50% 50%,
         rgba(67, 74, 249, 0) 0deg,
-        rgb(255, 255, 255) 360deg) !important;
+        var(--app-text-1) 360deg) !important;
   }
 
   &-header {
     height: 60px;
     flex: none;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid var(--app-border);
   }
 
   &-body {

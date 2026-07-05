@@ -139,7 +139,7 @@ onMounted(() => {
       p {
         font-weight: 400;
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--app-text-2);
         line-height: 18px;
         margin-bottom: 4px;
         white-space: nowrap;
@@ -173,7 +173,7 @@ onMounted(() => {
       .text {
         font-weight: 400;
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--app-text-2);
         line-height: 14px;
       }
     }

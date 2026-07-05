@@ -62,10 +62,10 @@ const action = {
     font-weight: 500;
     padding: 18px;
     font-size: 14px;
-    color: #ffffff;
+    color: var(--app-text-1);
     line-height: 22px;
     text-align: center;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid var(--app-border);
   }
 
   &-tabs {
@@ -74,7 +74,7 @@ const action = {
     width: auto;
     padding: 6px;
     border-radius: 4px;
-    background-color: #161718;
+    background-color: var(--app-bg-input);
     --td-bg-color-container-select: #2B3B52;
 
     :deep(.t-radio-button) {
@@ -86,13 +86,18 @@ const action = {
       margin: auto;
       font-weight: 400;
       font-size: 14px;
-      color: #FFFFFF;
+      color: var(--app-text-1);
       line-height: 20px;
     }
 
+    :deep(.t-radio-button.t-is-checked) {
+      background: #434af9;
+      border-color: #434af9;
+    }
+
     :deep(.t-is-checked .t-radio-button__label) {
-      // font-weight: bold;
       font-weight: 400;
+      color: #ffffff;
     }
   }
 
@@ -109,15 +114,15 @@ const action = {
     .content {
       border-radius: 8px 8px 8px 8px;
       width: 100%;
-      --td-bg-color-specialcomponent: #161718;
-      --td-brand-color-focus: #161718;
+      --td-bg-color-specialcomponent: var(--app-bg-input);
+      --td-brand-color-focus: var(--app-bg-input);
     }
 
     &-text {
       padding-bottom: 91px;
 
       .content {
-        background-color: #161718;
+        background-color: var(--app-bg-input);
       }
     }
 
