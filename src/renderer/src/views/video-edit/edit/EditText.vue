@@ -3,32 +3,39 @@
     <t-textarea class="text-content" v-model="select.text"
       :placeholder="$t('common.input.videoContentTextPlaceholder')" />
     <div class="text-listen">
-      <!-- 选择音色 -->
-      <div class="speaker">
-        <div class="speaker-content">
-          <span class="label">{{ $t('common.editView.speaker') }}</span>
-          <t-popup trigger="click" overlayClassName="speaker-popup" placement="top-left"
-            v-model:visible="state.popupVisible">
-            <t-select class="selector" :value="select.speaker?.name"
-              :popupProps="{ overlayClassName: 'speaker-options' }" :placeholder="$t('common.editView.selectSpeaker')">
-            </t-select>
-            <template #content>
-              <div class="popup-scoped">
-                <div class="side">{{ $t('common.editView.myVoice') }}</div>
-                <EditTextSpeaker class="wrap" v-model="select" @onSelect="action.onSelectSpeaker"
-                  :popupVisible="state.popupVisible" />
-              </div>
-            </template>
-          </t-popup>
-        </div>
+      <!-- TTS 引擎切换 -->
+      <div class="engine-tabs">
+        <div class="engine-tab" :class="{ active: !getter.isIndexTts.value }" @click="action.switchEngine('fish-speech')">Fish-Speech</div>
+        <div class="engine-tab" :class="{ active: getter.isIndexTts.value }" @click="action.switchEngine('index-tts2')">Index-TTS2</div>
       </div>
-      <!-- 试听 -->
-      <t-button class="start" size="small" @click="action.textToAudio" :loading="state.textToAudioLoading">{{ $t('common.editView.listen') }}</t-button>
+      <div class="listen-row">
+        <!-- 选择音色 -->
+        <div class="speaker">
+          <div class="speaker-content">
+            <span class="label">{{ $t('common.editView.speaker') }}</span>
+            <t-popup trigger="click" overlayClassName="speaker-popup" placement="top-left"
+              v-model:visible="state.popupVisible">
+              <t-select class="selector" :value="select.speaker?.name"
+                :popupProps="{ overlayClassName: 'speaker-options' }" :placeholder="getter.isIndexTts.value ? '选择预设音色' : $t('common.editView.selectSpeaker')">
+              </t-select>
+              <template #content>
+                <div class="popup-scoped">
+                  <div class="side">{{ getter.isIndexTts.value ? '预设音色' : $t('common.editView.myVoice') }}</div>
+                  <EditTextSpeaker class="wrap" v-model="select" @onSelect="action.onSelectSpeaker"
+                    :popupVisible="state.popupVisible" />
+                </div>
+              </template>
+            </t-popup>
+          </div>
+        </div>
+        <!-- 试听 -->
+        <t-button class="start" size="small" @click="action.textToAudio" :loading="state.textToAudioLoading">{{ $t('common.editView.listen') }}</t-button>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import EditTextSpeaker from './EditTextSpeaker.vue';
 import { useI18n } from 'vue-i18n'
@@ -50,12 +57,30 @@ const state = reactive({
   textToAudioLoading: false,
 })
 
+const getter = {
+  isIndexTts: computed(() => select.value?.ttsEngine === 'index-tts2'),
+}
+
 const action = {
+  switchEngine(engine) {
+    if (select.value?.ttsEngine === engine) return
+    select.value.ttsEngine = engine
+    select.value.speaker = {}
+    props.listener.pause()
+  },
   async textToAudio() {
     const { speaker, text } = select.value || {}
-    if (!speaker?.voice_id) {
-      MessagePlugin.error('请选择音色')
-      return false
+    const isIndexTts = getter.isIndexTts.value
+    if (isIndexTts) {
+      if (!speaker?.voice_preset_id) {
+        MessagePlugin.error('请选择预设音色')
+        return false
+      }
+    } else {
+      if (!speaker?.voice_id) {
+        MessagePlugin.error('请选择音色')
+        return false
+      }
     }
     if (!text) {
       MessagePlugin.error(t('common.message.videoContentText'))
@@ -63,14 +88,24 @@ const action = {
     }
     state.textToAudioLoading = true
     try {
-      const auditionUrl = await audition(speaker.voice_id, text)
-
-      const name = (speaker.name || '') + ' - ' + text.slice(0, 10)
-
-      props.listener.listen({
-        name,
-        audioUrl: auditionUrl
-      })
+      if (isIndexTts) {
+        if (!speaker.prompt_audio_path) {
+          MessagePlugin.error('未找到音色音频')
+          return false
+        }
+        const name = (speaker.name || '') + ' - 原音试听'
+        props.listener.listen({
+          name,
+          audioUrl: speaker.prompt_audio_path
+        })
+      } else {
+        const auditionUrl = await audition(speaker.voice_id, text)
+        const name = (speaker.name || '') + ' - ' + text.slice(0, 10)
+        props.listener.listen({
+          name,
+          audioUrl: auditionUrl
+        })
+      }
     } catch (err) {
       console.error('文本转音频失败', err)
       MessagePlugin.error(err.toString() || '试听失败')
@@ -81,6 +116,7 @@ const action = {
   },
   onSelectSpeaker(speaker) {
     props.listener.pause()
+    state.popupVisible = false
   }
 }
 
@@ -119,7 +155,7 @@ const action = {
   &-content {
     height: 100%;
     --td-text-color-placeholder: rgba(255, 255, 255, 0.6);
-    padding-bottom: 52px;
+    padding-bottom: 84px;
 
     :deep(textarea) {
       height: 100% !important;
@@ -136,11 +172,44 @@ const action = {
   &-listen {
     padding: 0 12px;
     position: absolute;
-    align-items: center;
     bottom: 12px;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
+
+    .engine-tabs {
+      display: flex;
+      gap: 4px;
+
+      .engine-tab {
+        flex: 1;
+        text-align: center;
+        padding: 5px 0;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.55);
+        cursor: pointer;
+        border-radius: 4px;
+        background: #27292D;
+        transition: all 0.2s;
+
+        &:hover {
+          color: #ffffff;
+        }
+
+        &.active {
+          background: #434af9;
+          color: #ffffff;
+        }
+      }
+    }
+
+    .listen-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
 
     .start {
       min-width: 48px;

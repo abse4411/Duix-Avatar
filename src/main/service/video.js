@@ -14,6 +14,7 @@ import {
   selectByID as selectVideoByID
 } from '../dao/video.js'
 import { makeAudio4Video, copyAudio4Video } from './voice.js'
+import { makeAudioByIndexTTS } from './voice-preset.js'
 import { makeVideo as makeVideoApi,getVideoStatus } from '../api/f2f.js'
 import log from '../logger.js'
 import { getVideoDuration } from '../util/ffmpeg.js'
@@ -60,16 +61,16 @@ function countVideo(name = '') {
   return count(name)
 }
 
-function saveVideo({ id, model_id, name, text_content, voice_id, audio_path }) {
+function saveVideo({ id, model_id, name, text_content, voice_id, audio_path, voice_preset_id }) {
   const video = selectVideoByID(id)
   if(audio_path){
     audio_path = copyAudio4Video(audio_path)
   }
 
   if (video) {
-    return update({ id, model_id, name, text_content, voice_id, audio_path })
+    return update({ id, model_id, name, text_content, voice_id, audio_path, voice_preset_id })
   }
-  return insertVideo({ model_id, name, status: 'draft', text_content, voice_id, audio_path })
+  return insertVideo({ model_id, name, status: 'draft', text_content, voice_id, audio_path, voice_preset_id })
 }
 
 /**
@@ -104,6 +105,14 @@ export async function synthesisVideo(videoId) {
     if(video.audio_path){
       // 将audio_path复制到ttsProduct目录下
       audioPath = video.audio_path
+    }else if(video.voice_preset_id){
+      // 使用 index-tts 预设音色生成音频
+      audioPath = await makeAudioByIndexTTS({
+        presetId: video.voice_preset_id,
+        text: video.text_content,
+        targetDir: assetPath.ttsProduct
+      })
+      log.debug('~ makeVideo ~ indexTts audioPath:', audioPath)
     }else{
       // 根据model信息中的voiceId获取voice信息
       const voice = selectVoiceByID(video.voice_id || model.voice_id)

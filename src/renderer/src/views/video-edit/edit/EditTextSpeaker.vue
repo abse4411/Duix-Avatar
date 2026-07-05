@@ -1,31 +1,49 @@
 <template>
   <div class="list">
     <!-- 搜索框 -->
-    <t-input class="list-search" v-model="state.search" :placeholder="$t('common.editView.searchSpeaker')"
+    <t-input class="list-search" v-model="state.search" :placeholder="getter.isIndexTts.value ? '搜索预设音色' : '搜索模特音色'"
       @change="action.searchList">
       <template #prefix-icon>
         <SearchIcon />
       </template>
     </t-input>
     <div class="list-box noscrollbar">
-      <div class="list-box__item" v-for="speaker in state.speakerList" :speaker-id="speaker.id" :key="speaker.id"
-        @click="action.selectSpeaker(speaker)" :class="{ '--active': select.speaker?.id == speaker.id }">
-        <t-avatar class="avatar" :alt="speaker.name">{{ speaker.name.slice(0, 1) }}</t-avatar>
-        <div class="name" :title="speaker.name">{{ speaker.name }}</div>
-        <t-image class="btn" v-if="state.playingId !== speaker.id" :src="PlayIcon"
-          @click="action.handlePlay(speaker)" />
-        <t-image class="btn" v-else :src="PauseIcon" @click="action.handlePlay(speaker)" />
-      </div>
+      <!-- 模特音色列表（Fish-Speech） -->
+      <template v-if="!getter.isIndexTts.value">
+        <div class="list-box__item" v-for="speaker in state.speakerList" :speaker-id="speaker.id" :key="speaker.id"
+          @click="action.selectSpeaker(speaker)" :class="{ '--active': select.speaker?.id == speaker.id && !select.speaker?.voice_preset_id }">
+          <t-avatar class="avatar" :alt="speaker.name">{{ speaker.name.slice(0, 1) }}</t-avatar>
+          <div class="name" :title="speaker.name">{{ speaker.name }}</div>
+          <t-image class="btn" v-if="state.playingId !== speaker.id" :src="PlayIcon"
+            @click.stop="action.handlePlay(speaker)" />
+          <t-image class="btn" v-else :src="PauseIcon" @click.stop="action.handlePlay(speaker)" />
+        </div>
+        <div v-if="state.speakerList.length === 0" class="empty-preset">暂无模特音色</div>
+      </template>
+      <!-- 预设音色列表（Index-TTS2） -->
+      <template v-else>
+        <div class="list-box__item" v-for="preset in state.presetList" :preset-id="preset.id" :key="preset.id"
+          @click="action.selectPreset(preset)" :class="{ '--active': select.speaker?.voice_preset_id == preset.id }">
+          <img v-if="preset.cover_image_path" class="cover-avatar" :src="localUrl.addFileProtocol(preset.cover_image_path)" />
+          <t-avatar v-else class="avatar" :alt="preset.name">{{ preset.name.slice(0, 1) }}</t-avatar>
+          <div class="name" :title="preset.name">{{ preset.name }}</div>
+          <t-image class="btn" v-if="state.playingId !== ('preset_' + preset.id)" :src="PlayIcon"
+            @click.stop="action.handlePlayPreset(preset)" />
+          <t-image class="btn" v-else :src="PauseIcon" @click.stop="action.stopAudio" />
+        </div>
+        <div v-if="state.presetList.length === 0" class="empty-preset">暂无预设音色，请先在「音色管理」中创建</div>
+      </template>
     </div>
   </div>
 
 </template>
 <script setup>
-import { reactive, onUnmounted, watchEffect } from 'vue'
+import { reactive, computed, onUnmounted, watchEffect, watch } from 'vue'
 import { SearchIcon } from 'tdesign-icons-vue-next'
 import PlayIcon from '@renderer/assets/images/icons/icon-play.png'
 import PauseIcon from '@renderer/assets/images/icons/icon-pause.png'
-import { modelPage } from '@renderer/api'
+import { modelPage, voicePresetPage } from '@renderer/api'
+import { localUrl } from '@renderer/utils'
 import { MessagePlugin } from 'tdesign-vue-next'
 
 const select = defineModel({})
@@ -57,9 +75,13 @@ const state = reactive({
   search: '',
   playingId: '',
   status: AUDIO_STATUS.UNPLAY,
-  speakerList: []
+  speakerList: [],
+  presetList: []
 })
 
+const getter = {
+  isIndexTts: computed(() => select.value?.ttsEngine === 'index-tts2'),
+}
 
 const emit = defineEmits(['onSelect'])
 
@@ -73,31 +95,64 @@ const action = {
         action.stopAudio()
       }
     })
+    // 引擎切换时重新加载列表
+    watch(() => select.value?.ttsEngine, async () => {
+      state.search = ''
+      if (props.popupVisible) {
+        await action.searchList()
+        setTimeout(action.scrollToSelectSpeaker)
+      }
+    })
   },
   async searchList() {
     try {
-      const result = await modelPage({
-        name: state.search,
-        page: 1,
-        pageSize: 100
-      })
-      state.speakerList = result.list || []
+      if (getter.isIndexTts.value) {
+        const result = await voicePresetPage({
+          name: state.search,
+          page: 1,
+          pageSize: 100
+        })
+        state.presetList = result.list || []
+      } else {
+        const result = await modelPage({
+          name: state.search,
+          page: 1,
+          pageSize: 100
+        })
+        state.speakerList = result.list || []
+      }
     } catch (err) {
       console.error('查询音色列表失败', err)
       state.speakerList = []
+      state.presetList = []
     }
   },
-  // 选中的音色滚动到中间
   scrollToSelectSpeaker() {
-    const speakerId = select.value.speaker?.id
-    if (speakerId) {
-      const target = document.querySelector(`div[speaker-id="${speakerId}"]`)
-      target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (getter.isIndexTts.value) {
+      const presetId = select.value.speaker?.voice_preset_id
+      if (presetId) {
+        const target = document.querySelector(`div[preset-id="${presetId}"]`)
+        target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    } else {
+      const speakerId = select.value.speaker?.id
+      if (speakerId && !select.value.speaker?.voice_preset_id) {
+        const target = document.querySelector(`div[speaker-id="${speakerId}"]`)
+        target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     }
   },
   selectSpeaker(speaker) {
     select.value.speaker = speaker
     emit('onSelect', speaker)
+  },
+  selectPreset(preset) {
+    select.value.speaker = {
+      voice_preset_id: preset.id,
+      name: preset.name,
+      prompt_audio_path: preset.prompt_audio_path
+    }
+    emit('onSelect', select.value.speaker)
   },
 
   stopAudio() {
@@ -112,7 +167,6 @@ const action = {
   },
 
   handlePlay(speaker) {
-    action.selectSpeaker(speaker)
     if (!speaker.audio_path) {
       MessagePlugin.error(`未找到${speaker.name}的音频链接`)
       return
@@ -122,6 +176,25 @@ const action = {
     } else {
       action.playAudio(speaker)
     }
+  },
+  handlePlayPreset(preset) {
+    const playId = 'preset_' + preset.id
+    if (state.playingId === playId) {
+      action.stopAudio()
+      return
+    }
+    if (!preset.prompt_audio_path) {
+      MessagePlugin.error('未找到音色音频')
+      return
+    }
+    action.stopAudio()
+    audio.src = localUrl.addFileProtocol(preset.prompt_audio_path)
+    state.playingId = playId
+    audio.play().catch((err) => {
+      console.error('播放失败', err)
+      MessagePlugin.error('播放失败')
+      state.playingId = ''
+    })
   },
 }
 
@@ -134,6 +207,13 @@ action.init()
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  .empty-preset {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+  }
 
   &-search {
     flex: none;
@@ -181,6 +261,14 @@ action.init()
       flex: none;
       width: 40px;
       height: 40px;
+    }
+
+    .cover-avatar {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
     .name {

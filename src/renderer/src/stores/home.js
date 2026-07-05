@@ -5,6 +5,7 @@ export const useHomeStore = defineStore('home', () => {
   const homeState = reactive({
     modelNum: 0,
     videoNum: 0,
+    voicePresetNum: 0,
     agreementVisible: false,
     language: 'zh',
     isAgree: false
@@ -15,6 +16,10 @@ export const useHomeStore = defineStore('home', () => {
 
   const setVideoNum = (data) => {
     homeState.videoNum = data
+  }
+
+  const setVoicePresetNum = (data) => {
+    homeState.voicePresetNum = data
   }
 
   const setAgreementVisible = (data) => {
@@ -30,6 +35,7 @@ export const useHomeStore = defineStore('home', () => {
     homeState,
     setModelNum,
     setVideoNum,
+    setVoicePresetNum,
     setAgreementVisible,
     setLanguage,
     setIsAgree

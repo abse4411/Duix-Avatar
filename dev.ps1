@@ -41,12 +41,13 @@ Write-Host 'Pre-flight checks:' -ForegroundColor Yellow
 $ok = $true
 
 # backend ports
-foreach ($port in 8383, 18180) {
+foreach ($port in 8383, 18180, 7860) {
     $listening = (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) -ne $null
     if ($listening) {
         Write-Host ("  port {0}: LISTENING (ok)" -f $port) -ForegroundColor Green
     } else {
-        Write-Host ("  port {0}: NOT listening (backend service may be down)" -f $port) -ForegroundColor Red
+        $svc = switch ($port) { 8383 {'face2face'} 18180 {'fish-speech TTS'} 7860 {'index-tts'} }
+        Write-Host ("  port {0} ({1}): NOT listening" -f $port, $svc) -ForegroundColor Red
         $ok = $false
     }
 }
@@ -61,9 +62,11 @@ if (Test-Path 'D:\') {
 
 if (-not $ok) {
     Write-Host ''
-    Write-Host 'Some pre-flight checks failed. The app will still start, but some' -ForegroundColor DarkYellow
-    Write-Host 'features (e.g. TTS on 18180) may error. For no-audio model flow,' -ForegroundColor DarkYellow
-    Write-Host 'only port 8383 (face2face) is strictly required.' -ForegroundColor DarkYellow
+    Write-Host 'Some pre-flight checks failed. The app will still start, but:' -ForegroundColor DarkYellow
+    Write-Host '  - 8383  (face2face):   required for video synthesis' -ForegroundColor DarkYellow
+    Write-Host '  - 18180 (fish-speech):  required for model-based TTS (can skip if using voice presets)' -ForegroundColor DarkYellow
+    Write-Host '  - 7860  (index-tts):    required for voice preset TTS feature' -ForegroundColor DarkYellow
+    Write-Host '  Start index-tts:  cd D:\mydir\index-tts; python webui.py' -ForegroundColor DarkYellow
 }
 
 Write-Host ''

@@ -65,5 +65,37 @@ export default [
         script: `alter table video
                     add voice_id integer;
                 `
+    },
+    {
+        version: 4,
+        script: `create table voice_preset
+                (
+                    id                  INTEGER
+                        constraint voice_preset_pk
+                            primary key autoincrement,
+                    name                TEXT not null,
+                    prompt_audio_path   TEXT not null,
+                    emo_audio_path      TEXT,
+                    emo_control_method  INTEGER default 0,
+                    emo_weight          REAL default 0.65,
+                    emo_vector          TEXT default '[0,0,0,0,0,0,0,0]',
+                    emo_text            TEXT default '',
+                    emo_random          INTEGER default 0,
+                    advanced_params     TEXT,
+                    created_at          INTEGER
+                );
+                `
+    },
+    {
+        version: 5,
+        script: `alter table video
+                    add voice_preset_id integer;
+                `
+    },
+    {
+        version: 6,
+        script: `alter table voice_preset
+                    add cover_image_path TEXT;
+                `
     }
 ]

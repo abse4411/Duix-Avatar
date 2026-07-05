@@ -68,3 +68,31 @@ export function saveContext(key, val) {
 export function audition(voiceId, text) {
   return window.electron.ipcRenderer.invoke('voice/audition', voiceId, text)
 }
+
+export function voicePresetPage({ page = 1, pageSize = 10, name = '' }) {
+  return window.electron.ipcRenderer.invoke('voicePreset/page', { page, pageSize, name })
+}
+
+export function findVoicePreset(id) {
+  return window.electron.ipcRenderer.invoke('voicePreset/find', id)
+}
+
+export function addVoicePreset(preset) {
+  return window.electron.ipcRenderer.invoke('voicePreset/add', preset)
+}
+
+export function updateVoicePreset(preset) {
+  return window.electron.ipcRenderer.invoke('voicePreset/update', preset)
+}
+
+export function removeVoicePreset(id) {
+  return window.electron.ipcRenderer.invoke('voicePreset/remove', id)
+}
+
+export function countVoicePreset(name = '') {
+  return window.electron.ipcRenderer.invoke('voicePreset/count', name)
+}
+
+export function voicePresetAudition(presetId, text) {
+  return window.electron.ipcRenderer.invoke('voicePreset/audition', presetId, text)
+}

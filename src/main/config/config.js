@@ -6,7 +6,8 @@ const isWin = process.platform === 'win32'
 
 export const serviceUrl = {
   face2face: 'http://127.0.0.1:8383/easy',
-  tts: 'http://127.0.0.1:18180'
+  tts: 'http://127.0.0.1:18180',
+  indexTts: 'http://127.0.0.1:7860'
 }
 
 export const assetPath = {
@@ -21,5 +22,8 @@ export const assetPath = {
     : path.join(os.homedir(), 'duix_avatar_data', 'voice', 'data'), // TTS服务根目录
   ttsTrain: isWin
     ? path.join('D:', 'duix_avatar_data', 'voice', 'data', 'origin_audio')
-    : path.join(os.homedir(), 'duix_avatar_data', 'voice', 'data', 'origin_audio') // TTS 训练产物
+    : path.join(os.homedir(), 'duix_avatar_data', 'voice', 'data', 'origin_audio'), // TTS 训练产物
+  voicePreset: isWin
+    ? path.join('D:', 'duix_avatar_data', 'voice_preset')
+    : path.join(os.homedir(), 'duix_avatar_data', 'voice_preset') // 音色预设音频文件
 }

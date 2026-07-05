@@ -35,7 +35,7 @@ import Select from './select/SelectView.vue'
 import Preview from './preview/PreviewView.vue'
 import Edit from './edit/EditView.vue'
 import ModalFinished from '@renderer/components/ModalFinished.vue'
-import { saveVideo, makeVideo, findModel, findVideo, modelPage } from '@renderer/api'
+import { saveVideo, makeVideo, findModel, findVideo, modelPage, findVoicePreset } from '@renderer/api'
 import { useRoute, useRouter } from 'vue-router'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { useI18n } from 'vue-i18n'
@@ -56,6 +56,7 @@ const state = reactive({
     model: {},
     speaker: {},
     text: '',
+    ttsEngine: 'fish-speech',
     modelList: [],
     uploaded: null,
   }
@@ -141,6 +142,26 @@ const action = {
       state.video.name = videoDetail.name
       state.select.text = videoDetail.text_content
       state.select.model.id = videoDetail.model_id
+      // 恢复 TTS 引擎与已选音色
+      if (videoDetail.voice_preset_id) {
+        state.select.ttsEngine = 'index-tts2'
+        try {
+          const preset = await findVoicePreset(videoDetail.voice_preset_id)
+          state.select.speaker = {
+            voice_preset_id: videoDetail.voice_preset_id,
+            name: preset?.name || '预设音色',
+            prompt_audio_path: preset?.prompt_audio_path
+          }
+        } catch {
+          state.select.speaker = {
+            voice_preset_id: videoDetail.voice_preset_id,
+            name: '预设音色'
+          }
+        }
+      } else {
+        state.select.ttsEngine = 'fish-speech'
+        // 模特音色会在 initModelDetail 后通过 watch 自动回填
+      }
     }
   },
   async initModelDetail(modelId) {
@@ -159,6 +180,10 @@ const action = {
     }
     if (!select.text && !select.uploaded?.audioUrl) {
       MessagePlugin.error(t('common.message.VideoCopywritingTextError'))
+      return false
+    }
+    if (!select.uploaded?.audioUrl && !select.speaker?.voice_id && !select.speaker?.voice_preset_id) {
+      MessagePlugin.error('请选择音色或上传音频')
       return false
     }
     return true
@@ -187,8 +212,10 @@ const action = {
     const sumitAudio = {}
     if (select.uploaded?.audioUrl) {
       sumitAudio.audio_path = select.uploaded.audioUrl
+    } else if (select.speaker?.voice_preset_id) {
+      sumitAudio.voice_preset_id = select.speaker.voice_preset_id
     } else {
-      sumitAudio.voice_id = select.speaker.voice_id
+      sumitAudio.voice_id = select.speaker?.voice_id
     }
 
     const saveId = await saveVideo({

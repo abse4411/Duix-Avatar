@@ -12,7 +12,11 @@
           {{ item.name }}
           <span class="total"
             >({{
-              item.id === "worksList" ? home.homeState.videoNum : home.homeState.modelNum
+              item.id === "worksList"
+                ? home.homeState.videoNum
+                : item.id === "myModelList"
+                ? home.homeState.modelNum
+                : home.homeState.voicePresetNum
             }})</span
           >
           <div class="line-box">
@@ -24,6 +28,7 @@
       <div class="list-data">
         <WorksList v-show="state.tabValue === 'worksList'" />
         <MyModelList ref="myModelListRef" v-show="state.tabValue === 'myModelList'" />
+        <VoicePresetList ref="voicePresetListRef" v-show="state.tabValue === 'voicePresetList'" />
       </div>
     </div>
   </div>
@@ -32,15 +37,17 @@
 import BannerList from "@renderer/views/home/components/bannerList.vue";
 import WorksList from "@renderer/views/home/components/worksList.vue";
 import MyModelList from "@renderer/views/home/components/myModelList.vue";
+import VoicePresetList from "@renderer/views/home/components/voicePresetList.vue";
 import { reactive, onMounted, watch, ref } from "vue";
 import { useHomeStore } from "@renderer/stores/home.js";
-import { countVideo, countModel } from "@renderer/api/index.js";
+import { countVideo, countModel, countVoicePreset } from "@renderer/api/index.js";
 import { useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n'
 const { t, locale } = useI18n()
 const unRoute = useRoute();
 const home = useHomeStore();
 const myModelListRef = ref(null);
+const voicePresetListRef = ref(null);
 const state = reactive({
   tabList: [
     {
@@ -54,6 +61,12 @@ const state = reactive({
       name: t('common.tab.myAvatarsText'),
       active: false,
       id: "myModelList",
+    },
+    {
+      key: 'common.tab.voicePresetText',
+      name: '音色管理',
+      active: false,
+      id: "voicePresetList",
     },
   ],
   teType: "",
@@ -117,6 +130,14 @@ const countTotal = async () => {
     const res = await countModel();
     if (res) {
       home.setModelNum(res);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  try {
+    const res = await countVoicePreset();
+    if (res !== undefined) {
+      home.setVoicePresetNum(res);
     }
   } catch (error) {
     console.log(error);
