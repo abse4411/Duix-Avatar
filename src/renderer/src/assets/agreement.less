@@ -17,10 +17,10 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    background: #fff;
+    background: var(--app-bg-surface);
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
     border-radius: 4px 4px 4px 4px;
-    border: 1px solid #3f4041;
+    border: 1px solid var(--app-border);
 
     .close {
       position: absolute;
@@ -38,36 +38,32 @@
       font-family:
         PingFang SC-Medium,
         PingFang SC;
-      color: #333333;
+      color: var(--app-text-1);
       text-align: center;
     }
     ::-webkit-scrollbar {
       width: 5px;
-      /* 滚动条的宽度 */
     }
 
     ::-webkit-scrollbar-track {
       border-radius: 5px;
       background-color: unset;
-      /* 轨道的背景颜色 */
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: #a7a7a7;
-      /* 滑块的颜色 */
+      background-color: var(--app-scrollbar-thumb);
       border-radius: 5px;
-      /* 滑块的圆角 */
     }
     .agreement {
       overflow: auto;
       margin-top: 10px;
       font-size: 12px;
-      color: #333333;
+      color: var(--app-text-1);
       font-weight: 400;
       line-height: 1.5;
       padding: 20px 14px;
       margin-top: 28px;
-      background: #F4F4F6;;
+      background: var(--app-bg-input);
       border-radius: 8px;
 
       .text {

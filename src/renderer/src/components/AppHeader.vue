@@ -15,7 +15,7 @@
             class="dropdown-box">
             <div class="language-switch-box">
               <span>{{ item.content }}</span>
-              <img v-if="item.value === 'languageSwitch'" src="@renderer/assets/images/icons/switch.svg" alt="switch"
+              <img v-if="item.value === 'languageSwitch' || item.value === 'themeSwitch'" src="@renderer/assets/images/icons/switch.svg" alt="switch"
                 class="language-switch" />
             </div>
 
