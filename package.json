@@ -19,6 +19,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "adm-zip": "^0.5.18",
     "axios": "^1.7.7",
     "better-sqlite3": "^11.5.0",
     "dayjs": "^1.11.13",

@@ -39,6 +39,7 @@ export const commonZh = {
   videoList: {
     previewTitle: '预览视频',
     downloadTitle: '下载视频',
+    subtitleTitle: '字幕',
     makeFailedText: '制作失败',
     draftsText: '草稿',
     underProduction: '正在制作中，请耐心等待',
@@ -185,6 +186,7 @@ export const commonEn = {
   videoList: {
     previewTitle: 'Preview',
     downloadTitle: 'Download',
+    subtitleTitle: 'Subtitle',
     makeFailedText: 'Failed',
     draftsText: 'Drafts',
     underProduction: 'Generating, please wait for a moment.',

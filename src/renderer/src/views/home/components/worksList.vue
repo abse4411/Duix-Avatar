@@ -77,6 +77,14 @@
                 <img src="../../../assets/images/home/icon-down.svg" />
                 <span>{{ $t('common.videoList.downloadTitle') }}</span>
               </div>
+              <div
+                v-if="item.status === 'success' && item.subtitle_path"
+                class="subtitle-button"
+                @click="goSubtitle(item.id)"
+              >
+                <img src="../../../assets/images/home/video.svg" />
+                <span>{{ $t('common.videoList.subtitleTitle') }}</span>
+              </div>
               <div v-if="item.status === 'failed'" class="detection-failed-text">
                 {{ $t('common.videoList.makeFailedText') }}
                 <img src="../../../assets/images/home/icon-delete.svg" />
@@ -209,6 +217,9 @@ const cancelFun = () => {
 }
 const linkRoute = () => {
   router.push('/video/edit')
+}
+const goSubtitle = (id) => {
+  router.push('/subtitle/edit?id=' + id)
 }
 const previewVideo = (url) => {
   state.showVideoDialog = true
@@ -358,6 +369,18 @@ const downloadVideo = async (video) => {
               align-items: center;
               justify-content: center;
               border: 1px solid #434af9;
+              font-family: PingFang SC, PingFang SC;
+            }
+            .subtitle-button {
+              width: 90px;
+              height: 30px;
+              cursor: pointer;
+              background: var(--app-bg-elevated);
+              border-radius: 4px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border: 1px solid var(--app-border);
               font-family: PingFang SC, PingFang SC;
               font-weight: 500;
               font-size: 12px;

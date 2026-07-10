@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 export const handleShowMenu = (path) => {
-  const MenuList = ['/video/edit', '/login']
+  const MenuList = ['/video/edit', '/subtitle/edit', '/login']
   if (MenuList.find((item) => path.includes(item))) {
     return true
   } else {

@@ -24,6 +24,14 @@ export function exportVideo(id, outputPath) {
   return window.electron.ipcRenderer.invoke('video/export', id, outputPath)
 }
 
+export function getSubtitle(videoId) {
+  return window.electron.ipcRenderer.invoke('video/getSubtitle', videoId)
+}
+
+export function saveSubtitle(videoId, srtContent) {
+  return window.electron.ipcRenderer.invoke('video/saveSubtitle', videoId, srtContent)
+}
+
 export function modifyVideo(video) {
   return window.electron.ipcRenderer.invoke('video/modify', video)
 }

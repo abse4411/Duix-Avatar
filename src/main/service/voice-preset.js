@@ -205,9 +205,10 @@ function removePreset(id) {
  * @param {number} param.presetId 音色预设 ID
  * @param {string} param.text 目标文本
  * @param {string} param.targetDir 输出目录
- * @returns {Promise<string>} 生成的音频文件名
+ * @param {boolean} param.withSubtitle 是否同时获取字幕
+ * @returns {Promise<{audioFileName: string, subtitleFileName: string|null}>} 音频文件名 + 字幕文件名
  */
-export async function makeAudioByIndexTTS({ presetId, text, targetDir }) {
+export async function makeAudioByIndexTTS({ presetId, text, targetDir, withSubtitle = false }) {
   const preset = selectByID(presetId)
   if (!preset) throw new Error('音色预设不存在')
 
@@ -216,7 +217,7 @@ export async function makeAudioByIndexTTS({ presetId, text, targetDir }) {
     ? path.join(assetPath.voicePreset, preset.emo_audio_path)
     : null
 
-  const audioBuffer = await generateAudioApi({
+  const { audioBuffer, srtContent } = await generateAudioApi({
     text,
     promptAudioPath,
     emoAudioPath,
@@ -225,16 +226,25 @@ export async function makeAudioByIndexTTS({ presetId, text, targetDir }) {
     emo_vector: JSON.parse(preset.emo_vector || '[0,0,0,0,0,0,0,0]'),
     emo_text: preset.emo_text,
     emo_random: !!preset.emo_random,
-    advanced: JSON.parse(preset.advanced_params || '{}')
+    advanced: JSON.parse(preset.advanced_params || '{}'),
+    withSubtitle
   })
 
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true })
   }
-  const fileName = `${dayjs().format('YYYYMMDDHHmmssSSS')}.wav`
-  fs.writeFileSync(path.join(targetDir, fileName), Buffer.from(audioBuffer))
-  log.info('~ makeAudioByIndexTTS ~ fileName:', fileName)
-  return fileName
+  const timestamp = dayjs().format('YYYYMMDDHHmmssSSS')
+  const audioFileName = `${timestamp}.wav`
+  fs.writeFileSync(path.join(targetDir, audioFileName), Buffer.from(audioBuffer))
+
+  let subtitleFileName = null
+  if (withSubtitle && srtContent) {
+    subtitleFileName = `${timestamp}.srt`
+    fs.writeFileSync(path.join(targetDir, subtitleFileName), srtContent, 'utf-8')
+  }
+
+  log.info('~ makeAudioByIndexTTS ~ audioFileName:', audioFileName, 'subtitleFileName:', subtitleFileName)
+  return { audioFileName, subtitleFileName }
 }
 
 /**
@@ -245,12 +255,13 @@ export async function makeAudioByIndexTTS({ presetId, text, targetDir }) {
  */
 export async function audition(presetId, text) {
   const tmpDir = require('os').tmpdir()
-  const fileName = await makeAudioByIndexTTS({
+  const { audioFileName } = await makeAudioByIndexTTS({
     presetId,
     text,
-    targetDir: tmpDir
+    targetDir: tmpDir,
+    withSubtitle: false
   })
-  return path.join(tmpDir, fileName)
+  return path.join(tmpDir, audioFileName)
 }
 
 export function init() {

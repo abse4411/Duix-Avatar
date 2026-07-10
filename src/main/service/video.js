@@ -34,7 +34,8 @@ function page({ page, pageSize, name = '' }) {
   const list = selectPage({ page, pageSize, name }).map((video) => {
     video = {
       ...video,
-      file_path: video.file_path ? path.join(assetPath.model, video.file_path) : video.file_path
+      file_path: video.file_path ? path.join(assetPath.model, video.file_path) : video.file_path,
+      subtitle_path: video.subtitle_path ? path.join(assetPath.ttsProduct, video.subtitle_path) : video.subtitle_path
     }
 
     if(video.status === 'waiting'){
@@ -53,7 +54,8 @@ function findVideo(videoId) {
   const video = selectVideoByID(videoId)
   return {
     ...video,
-    file_path: video.file_path ? path.join(assetPath.model, video.file_path) : video.file_path
+    file_path: video.file_path ? path.join(assetPath.model, video.file_path) : video.file_path,
+    subtitle_path: video.subtitle_path ? path.join(assetPath.ttsProduct, video.subtitle_path) : video.subtitle_path
   }
 }
 
@@ -102,17 +104,21 @@ export async function synthesisVideo(videoId) {
     log.debug('~ makeVideo ~ model:', model)
 
     let audioPath
+    let subtitlePath = null
     if(video.audio_path){
       // 将audio_path复制到ttsProduct目录下
       audioPath = video.audio_path
     }else if(video.voice_preset_id){
-      // 使用 index-tts 预设音色生成音频
-      audioPath = await makeAudioByIndexTTS({
+      // 使用 index-tts 预设音色生成音频（同时获取字幕）
+      const result = await makeAudioByIndexTTS({
         presetId: video.voice_preset_id,
         text: video.text_content,
-        targetDir: assetPath.ttsProduct
+        targetDir: assetPath.ttsProduct,
+        withSubtitle: true
       })
-      log.debug('~ makeVideo ~ indexTts audioPath:', audioPath)
+      audioPath = result.audioFileName
+      subtitlePath = result.subtitleFileName
+      log.debug('~ makeVideo ~ indexTts audioPath:', audioPath, 'subtitlePath:', subtitlePath)
     }else{
       // 根据model信息中的voiceId获取voice信息
       const voice = selectVoiceByID(video.voice_id || model.voice_id)
@@ -139,6 +145,7 @@ export async function synthesisVideo(videoId) {
         status: 'pending',
         message: result,
         audio_path: audioPath,
+        subtitle_path: subtitlePath,
         param,
         code: param.code
       })
@@ -149,6 +156,7 @@ export async function synthesisVideo(videoId) {
         status: 'failed',
         message: result.msg,
         audio_path: audioPath,
+        subtitle_path: subtitlePath,
         param,
         code: param.code
       })
@@ -238,6 +246,12 @@ function removeVideo(videoId) {
     fs.unlinkSync(audioPath)
   }
 
+  // 删除字幕
+  const subtitlePath = path.join(assetPath.ttsProduct, video.subtitle_path ||'')
+  if (!isEmpty(video.subtitle_path) && fs.existsSync(subtitlePath)) {
+    fs.unlinkSync(subtitlePath)
+  }
+
   // 删除视频表
   return deleteVideo(videoId)
 }
@@ -272,6 +286,40 @@ function modify(video) {
   return update(video)
 }
 
+/**
+ * 获取视频的字幕内容
+ * @param {number} videoId
+ * @returns {string|null} SRT 字幕文本
+ */
+function getSubtitle(videoId) {
+  const video = selectVideoByID(videoId)
+  if (!video || !video.subtitle_path) return null
+  const subtitlePath = path.join(assetPath.ttsProduct, video.subtitle_path)
+  if (!fs.existsSync(subtitlePath)) return null
+  return fs.readFileSync(subtitlePath, 'utf-8')
+}
+
+/**
+ * 保存字幕内容到文件
+ * @param {number} videoId
+ * @param {string} srtContent SRT 字幕文本
+ */
+function saveSubtitle(videoId, srtContent) {
+  const video = selectVideoByID(videoId)
+  if (!video) throw new Error('视频不存在')
+  if (!video.subtitle_path) {
+    // 如果之前没有字幕文件，创建新的
+    const fileName = `${Date.now()}.srt`
+    update({ id: videoId, subtitle_path: fileName })
+    const subtitlePath = path.join(assetPath.ttsProduct, fileName)
+    fs.writeFileSync(subtitlePath, srtContent, 'utf-8')
+    return fileName
+  }
+  const subtitlePath = path.join(assetPath.ttsProduct, video.subtitle_path)
+  fs.writeFileSync(subtitlePath, srtContent, 'utf-8')
+  return video.subtitle_path
+}
+
 export function init() {
   ipcMain.handle(MODEL_NAME + '/page', (event, ...args) => {
     return page(...args)
@@ -296,5 +344,11 @@ export function init() {
   })
   ipcMain.handle(MODEL_NAME + '/remove', (event, ...args) => {
     return removeVideo(...args)
+  })
+  ipcMain.handle(MODEL_NAME + '/getSubtitle', (event, ...args) => {
+    return getSubtitle(...args)
+  })
+  ipcMain.handle(MODEL_NAME + '/saveSubtitle', (event, ...args) => {
+    return saveSubtitle(...args)
   })
 }

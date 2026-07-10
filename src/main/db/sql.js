@@ -97,5 +97,11 @@ export default [
         script: `alter table voice_preset
                     add cover_image_path TEXT;
                 `
+    },
+    {
+        version: 7,
+        script: `alter table video
+                    add subtitle_path TEXT;
+                `
     }
 ]
