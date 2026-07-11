@@ -157,8 +157,9 @@ export function renderSubtitleFrame(videoPath, assPath, timeSeconds, outputPath)
   const escapedAssPath = assPath.replace(/\\/g, '/').replace(/:/g, '\\:')
   const filterStr = `ass='${escapedAssPath}'`
   const args = [
-    '-ss', String(timeSeconds),
     '-i', videoPath,
+    '-ss', String(timeSeconds),
+    '-copyts',
     '-vf', filterStr,
     '-frames:v', '1',
     '-an',

@@ -415,6 +415,7 @@ async function burnVideoSubtitle(videoId, assContent, options = {}, sender) {
  * @returns {Promise<string>} 输出图片路径
  */
 async function renderSubtitleFrameService(videoId, assContent, timeSeconds) {
+  log.info(`[renderSubtitleFrameService] videoId: ${videoId}, timeSeconds: ${timeSeconds}`)
   const video = selectVideoByID(videoId)
   if (!video) throw new Error('视频不存在')
   const sourceFileName = video.origin_file_path || video.file_path

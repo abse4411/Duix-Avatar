@@ -318,7 +318,9 @@ const state = reactive({
   // 播放控制
   isPlaying: false,
   isFullscreen: false,
-  rendering: false
+  rendering: false,
+  // 临时标记：点击字幕条后暂停不自动跳转
+  skipAutoSeekOnPause: false
 })
 
 // 拖拽状态
@@ -390,9 +392,9 @@ onMounted(async () => {
   })
 
   await nextTick()
-  if (videoWrapperRef.value) {
+  if (videoBoxRef.value) {
     resizeObserver = new ResizeObserver(() => updateScale())
-    resizeObserver.observe(videoWrapperRef.value)
+    resizeObserver.observe(videoBoxRef.value)
   }
 })
 
@@ -408,46 +410,56 @@ onUnmounted(() => {
 let renderTimer = null
 let renderToken = 0
 
-const scheduleAccurateRender = (autoSeekToSubtitle = false) => {
-  if (renderTimer) clearTimeout(renderTimer)
-  renderTimer = setTimeout(async () => {
-    if (!state.videoId) return
-    const currentToken = ++renderToken
-    state.rendering = true
-    try {
-      const assContent = srtToAss(state.segments, state.style, state.videoWidth, state.videoHeight)
-      let renderTime = videoRef.value ? videoRef.value.currentTime : 0
-      // 仅在样式变更时自动 seek 到有字幕的位置（不覆盖用户的时间轴点击）
-      if (autoSeekToSubtitle) {
-        const hasSubAtCurrent = state.segments.some((s) => {
-          return s.text && s.text.trim() &&
-            renderTime >= srtTimeToSeconds(s.start) && renderTime <= srtTimeToSeconds(s.end)
-        })
-        if (!hasSubAtCurrent) {
-          const firstTextSeg = state.segments.find((s) => s.text && s.text.trim())
-          if (firstTextSeg) {
-            renderTime = (srtTimeToSeconds(firstTextSeg.start) + srtTimeToSeconds(firstTextSeg.end)) / 2
-            if (videoRef.value) {
-              videoRef.value.currentTime = renderTime
-            }
+const accurateRender = async (autoSeekToSubtitle = false, renderTime = 0) => {
+  if (!state.videoId) return
+  const currentToken = ++renderToken
+  state.rendering = true
+  try {
+    const assContent = srtToAss(state.segments, state.style, state.videoWidth, state.videoHeight)
+    if (autoSeekToSubtitle) {
+      const hasSubAtCurrent = state.segments.some((s) => {
+        return s.text && s.text.trim() &&
+          renderTime >= srtTimeToSeconds(s.start) && renderTime <= srtTimeToSeconds(s.end)
+      })
+      if (!hasSubAtCurrent) {
+        const firstTextSeg = state.segments.find((s) => s.text && s.text.trim())
+        if (firstTextSeg) {
+          renderTime = (srtTimeToSeconds(firstTextSeg.start) + srtTimeToSeconds(firstTextSeg.end)) / 2
+          if (videoRef.value) {
+            videoRef.value.currentTime = renderTime
           }
         }
       }
-      console.log('[subtitle preview] rendering at', renderTime, 's, autoSeek:', autoSeekToSubtitle)
-      const imgPath = await renderSubtitleFrame(state.videoId, assContent, renderTime)
-      if (currentToken !== renderToken) return
-      state.previewImageUrl = localUrl.addFileProtocol(imgPath) + '?t=' + Date.now()
-      state.showAccuratePreview = true
-      console.log('[subtitle preview] done:', state.previewImageUrl)
-    } catch (err) {
-      console.error('渲染预览失败', err)
-      if (currentToken === renderToken) {
-        MessagePlugin.error('预览渲染失败: ' + (err.message || err))
-      }
-    } finally {
-      if (currentToken === renderToken) state.rendering = false
     }
-  }, 300)
+    console.log('[subtitle preview] rendering at', renderTime, 's, autoSeek:', autoSeekToSubtitle)
+    const imgPath = await renderSubtitleFrame(state.videoId, assContent, renderTime)
+    if (currentToken !== renderToken) return
+    state.previewImageUrl = localUrl.addFileProtocol(imgPath) + '?t=' + Date.now()
+    state.showAccuratePreview = true
+    console.log('[subtitle preview] done:', state.previewImageUrl)
+  } catch (err) {
+    console.error('渲染预览失败', err)
+    if (currentToken === renderToken) {
+      MessagePlugin.error('预览渲染失败: ' + (err.message || err))
+    }
+  } finally {
+    if (currentToken === renderToken) {
+      state.rendering = false
+      state.skipAutoSeekOnPause = false
+    }
+  }
+}
+
+const scheduleAccurateRender = (autoSeekToSubtitle = false, targetTime = null) => {
+  if (renderTimer) clearTimeout(renderTimer)
+  const time = targetTime !== null ? targetTime : (videoRef.value ? videoRef.value.currentTime : 0)
+  if (targetTime !== null) {
+    accurateRender(autoSeekToSubtitle, time)
+  } else {
+    renderTimer = setTimeout(() => {
+      accurateRender(autoSeekToSubtitle, videoRef.value ? videoRef.value.currentTime : 0)
+    }, 300)
+  }
 }
 
 // 监听样式变化 → 暂停视频并触发准确预览
@@ -531,12 +543,16 @@ const onPlay = () => {
 
 const onPause = () => {
   state.isPlaying = false
-  scheduleAccurateRender(true)
+  if (!state.skipAutoSeekOnPause) {
+    scheduleAccurateRender(false)
+  }
 }
 
 const onSeeked = () => {
   console.log('[subtitle] seeked event, scheduling render')
-  scheduleAccurateRender(false)
+  if (!state.skipAutoSeekOnPause) {
+    scheduleAccurateRender(false)
+  }
 }
 
 const togglePlay = () => {
@@ -738,10 +754,14 @@ const onDocMouseUp = () => {
   if (!dragState.moved && state.segments[dragState.index]) {
     const seg = state.segments[dragState.index]
     state.activeIndex = dragState.index
+    const targetTime = (srtTimeToSeconds(seg.start) + srtTimeToSeconds(seg.end)) / 2
+    console.log('[subtitle] onDocMouseUp, clicked seg:', seg.index, 'text:', seg.text, 'targetTime:', targetTime)
     if (videoRef.value) {
-      videoRef.value.currentTime = srtTimeToSeconds(seg.start)
-      videoRef.value.play()
+      state.skipAutoSeekOnPause = true
+      videoRef.value.currentTime = targetTime
+      videoRef.value.pause()
     }
+    scheduleAccurateRender(false, targetTime)
   }
   dragState.active = false
   dragState.type = null
