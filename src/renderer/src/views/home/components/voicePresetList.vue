@@ -1,20 +1,23 @@
 <template>
   <div class="preset-content-box">
     <div class="form-box">
-      <t-input v-model="state.formData.name" class="form-input" placeholder="请输入预设名称搜索" @change="onKeypressFun">
+      <t-input v-model="state.formData.name" class="form-input" :placeholder="t('common.voicePreset.searchPlaceholder')" @change="onKeypressFun">
         <template #prefix-icon>
           <img src="../../../assets/images/home/select.svg" />
         </template>
       </t-input>
+      <t-button theme="primary" class="add-preset-btn" @click="handleCreate">
+        {{ t('common.voicePreset.addPresetText') }}
+      </t-button>
     </div>
     <div class="preset-content-table">
       <div v-if="home.homeState.voicePresetNum === 0" class="empty">
         <div class="empty-box">
           <img src="../../../assets/images/home/myModelList.svg" />
-          <div class="empty-text">暂无音色预设</div>
+          <div class="empty-text">{{ t('common.voicePreset.emptyText') }}</div>
           <div class="empty-text">
-            <span @click="handleCreate">创建音色预设</span>
-            开始使用 IndexTTS
+            <span @click="handleCreate">{{ t('common.voicePreset.createPresetText') }}</span>
+            {{ t('common.voicePreset.startUsingText') }}
           </div>
         </div>
       </div>
@@ -89,8 +92,10 @@ import { localUrl } from '@renderer/utils'
 import DeleteDialog from '@renderer/components/deleteDialog.vue'
 import { useHomeStore } from '@renderer/stores/home.js'
 import { createVoicePreset } from '@renderer/components/voice-preset-create'
+import { useI18n } from 'vue-i18n'
 
 const home = useHomeStore()
+const { t } = useI18n()
 const deleteDialogRef = ref(null)
 
 const EMO_LABELS = ['与音色相同', '情感参考音频', '情感向量', '情感描述文本']
@@ -259,9 +264,13 @@ defineExpose({
     position: absolute;
     top: -50px;
     right: 0;
+    align-items: center;
+    gap: 12px;
     .form-input {
       width: 216px;
-      margin-left: auto;
+    }
+    .add-preset-btn {
+      flex-shrink: 0;
     }
   }
 

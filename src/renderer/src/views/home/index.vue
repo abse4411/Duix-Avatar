@@ -64,7 +64,7 @@ const state = reactive({
     },
     {
       key: 'common.tab.voicePresetText',
-      name: '音色管理',
+      name: t('common.tab.voicePresetText'),
       active: false,
       id: "voicePresetList",
     },

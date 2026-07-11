@@ -17,7 +17,15 @@ export const commonZh = {
   },
   tab: {
     myWorksText: '我的作品',
-    myAvatarsText: '我的数字模特'
+    myAvatarsText: '我的数字模特',
+    voicePresetText: '音色管理'
+  },
+  voicePreset: {
+    addPresetText: '添加音色',
+    emptyText: '暂无音色预设',
+    createPresetText: '创建音色预设',
+    startUsingText: '开始使用 IndexTTS',
+    searchPlaceholder: '请输入预设名称搜索'
   },
   input: {
     enterNamePlaceholder: '请输入数字模特名称',
@@ -202,7 +210,15 @@ export const commonEn = {
   },
   tab: {
     myWorksText: 'My Works',
-    myAvatarsText: 'My Avatars'
+    myAvatarsText: 'My Avatars',
+    voicePresetText: 'Voice Preset'
+  },
+  voicePreset: {
+    addPresetText: 'Add Preset',
+    emptyText: 'No voice presets yet',
+    createPresetText: 'Create Preset',
+    startUsingText: 'Start using IndexTTS',
+    searchPlaceholder: 'Search preset name'
   },
   input: {
     enterNamePlaceholder: 'Please Enter the Name',
