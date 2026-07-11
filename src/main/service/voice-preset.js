@@ -69,7 +69,7 @@ function findPreset(id) {
  * @param {boolean} param.emo_random
  * @param {object} param.advanced_params
  */
-function addPreset(param) {
+export function addPreset(param) {
   if (!fs.existsSync(assetPath.voicePreset)) {
     fs.mkdirSync(assetPath.voicePreset, { recursive: true })
   }

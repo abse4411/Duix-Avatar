@@ -52,7 +52,8 @@ const state = reactive({
       videoPath: ''
     },
     name: '',
-    mode: 'noaudio'
+    mode: 'noaudio',
+    ttsService: 'fish-speech'
   }
 })
 
@@ -76,12 +77,13 @@ const action = {
   async submit() {
     if (!action.check()) return
     state.loading.submit = true
-    const { name, uploadInfo, mode } = state.form
+    const { name, uploadInfo, mode, ttsService } = state.form
     try {
       const api = mode === 'noaudio' ? addModelNoAudio : addModel
       const isOK = await api({
         name,
-        videoPath: uploadInfo.videoPath
+        videoPath: uploadInfo.videoPath,
+        ttsService
       })
       if (isOK) {
         const isToSee = await modalFinished.value.show()

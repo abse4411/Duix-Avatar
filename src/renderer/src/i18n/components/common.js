@@ -101,7 +101,11 @@ export const commonZh = {
     faceBig: '面部过大',
     faceNo: '未检测到人脸',
     faceHalf: '五官遮挡',
-    videoName: '视频名称'
+    videoName: '视频名称',
+    ttsServiceText: '语音服务',
+    ttsServiceFishSpeech: 'Fish-Speech',
+    ttsServiceIndexTTS: 'Index-TTS2',
+    ttsServiceTip: '选择Index-TTS2将同时创建音色预设'
   },
   selectView: {
     selectHeaderText: '模特列表',
@@ -294,7 +298,11 @@ export const commonEn = {
     faceBig: 'face too close',
     faceNo: 'No face',
     faceHalf: 'Face is obscured',
-    videoName: 'video name'
+    videoName: 'video name',
+    ttsServiceText: 'Voice Service',
+    ttsServiceFishSpeech: 'Fish-Speech',
+    ttsServiceIndexTTS: 'Index-TTS2',
+    ttsServiceTip: 'Selecting Index-TTS2 will also create a voice preset'
   },
   selectView: {
     selectHeaderText: 'My Avatars',

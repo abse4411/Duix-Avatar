@@ -72,8 +72,8 @@ export function findModel(id) {
   return window.electron.ipcRenderer.invoke('model/find', id)
 }
 
-export function addModel({ name, videoPath }) {
-  return window.electron.ipcRenderer.invoke('model/addModel', name, videoPath)
+export function addModel({ name, videoPath, ttsService }) {
+  return window.electron.ipcRenderer.invoke('model/addModel', name, videoPath, ttsService)
 }
 
 export function addModelNoAudio({ name, videoPath }) {

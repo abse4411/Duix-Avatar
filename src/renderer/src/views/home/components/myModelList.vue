@@ -11,6 +11,9 @@
           <img src="../../../assets/images/home/select.svg" />
         </template>
       </t-input>
+      <t-button theme="primary" class="add-model-btn" @click="handleCreateModel">
+        {{ $t('common.banner1.buttonText') }}
+      </t-button>
     </div>
     <div class="tab-box" style="display: none">
       <li
@@ -130,6 +133,7 @@ const globalZh = merge(zhConfig, {
 const home = useHomeStore()
 const router = useRouter()
 const deleteDialogRef = ref(null)
+const emit = defineEmits(['submitOK'])
 const state = reactive({
   current: 1,
   pageSize: 10,
@@ -253,9 +257,13 @@ const tabClick = (index) => {
     position: absolute;
     top: -50px;
     right: 0;
+    align-items: center;
+    gap: 12px;
     .form-input {
       width: 216px;
-      margin-left: auto;
+    }
+    .add-model-btn {
+      flex-shrink: 0;
     }
   }
   .tab-box {

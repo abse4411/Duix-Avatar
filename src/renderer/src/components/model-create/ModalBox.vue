@@ -10,6 +10,16 @@
       <span class="mode-tip" v-if="form.mode === 'noaudio'">该模式不调用语音克隆服务，合成视频时需自行上传音频</span>
     </div>
 
+    <!-- TTS服务选择 -->
+    <div class="form-item --tts-service" v-if="form.mode === 'audio'">
+      <span class="label">{{ $t('common.modelCreateView.ttsServiceText') }}</span>
+      <t-radio-group class="value" v-model="form.ttsService" variant="default-filled" size="small">
+        <t-radio-button value="fish-speech">{{ $t('common.modelCreateView.ttsServiceFishSpeech') }}</t-radio-button>
+        <t-radio-button value="index-tts">{{ $t('common.modelCreateView.ttsServiceIndexTTS') }}</t-radio-button>
+      </t-radio-group>
+      <span class="mode-tip" v-if="form.ttsService === 'index-tts'">{{ $t('common.modelCreateView.ttsServiceTip') }}</span>
+    </div>
+
     <!-- 模特名称 -->
     <div class="form-item --name">
       <span class="label required">{{ $t('common.modelCreateView.avatarNameText') }}</span>
@@ -31,7 +41,7 @@
 import ModalBoxUpload from './ModalBoxUpload.vue'
 import ModalBoxGuide from './ModalBoxGuide.vue'
 
-const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
+const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio', ttsService: 'fish-speech' })
 </script>
 <style lang="less" scoped>
 .form {
@@ -65,7 +75,8 @@ const form = defineModel({ uploadInfo: {}, name: '', mode: 'noaudio' })
       color: var(--app-text-1);
     }
 
-    &.--mode {
+    &.--mode,
+        &.--tts-service {
       align-items: center;
       gap: 12px;
 

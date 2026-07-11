@@ -109,10 +109,11 @@ export async function synthesisVideo(videoId) {
     if(video.audio_path){
       // 将audio_path复制到ttsProduct目录下
       audioPath = video.audio_path
-    }else if(video.voice_preset_id){
+    }else if(video.voice_preset_id || model.voice_preset_id){
       // 使用 index-tts 预设音色生成音频（同时获取字幕）
+      const presetId = video.voice_preset_id || model.voice_preset_id
       const result = await makeAudioByIndexTTS({
-        presetId: video.voice_preset_id,
+        presetId,
         text: video.text_content,
         targetDir: assetPath.ttsProduct,
         withSubtitle: true

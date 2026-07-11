@@ -109,5 +109,11 @@ export default [
         script: `alter table video
                     add origin_file_path TEXT;
                 `
+    },
+    {
+        version: 9,
+        script: `alter table f2f_model
+                    add voice_preset_id INTEGER;
+                `
     }
 ]

@@ -26,8 +26,8 @@
         <div @click="debug">debug</div>
       </div>
       <div class="list-data">
-        <WorksList v-show="state.tabValue === 'worksList'" />
-        <MyModelList ref="myModelListRef" v-show="state.tabValue === 'myModelList'" />
+        <WorksList ref="worksListRef" v-show="state.tabValue === 'worksList'" />
+        <MyModelList ref="myModelListRef" v-show="state.tabValue === 'myModelList'" @submitOK="submitOKFun" />
         <VoicePresetList ref="voicePresetListRef" v-show="state.tabValue === 'voicePresetList'" />
       </div>
     </div>
@@ -46,6 +46,7 @@ import { useI18n } from 'vue-i18n'
 const { t, locale } = useI18n()
 const unRoute = useRoute();
 const home = useHomeStore();
+const worksListRef = ref(null);
 const myModelListRef = ref(null);
 const voicePresetListRef = ref(null);
 const state = reactive({
@@ -115,6 +116,27 @@ const tabClick = (index) => {
       yItem.active = false;
     }
   });
+  refreshCurrentTab();
+};
+
+const refreshCurrentTab = () => {
+  switch (state.tabValue) {
+    case 'worksList':
+      if (worksListRef.value && worksListRef.value.videoPageAJax) {
+        worksListRef.value.videoPageAJax();
+      }
+      break;
+    case 'myModelList':
+      if (myModelListRef.value && myModelListRef.value.modelPageAJax) {
+        myModelListRef.value.modelPageAJax();
+      }
+      break;
+    case 'voicePresetList':
+      if (voicePresetListRef.value && voicePresetListRef.value.presetPageAJax) {
+        voicePresetListRef.value.presetPageAJax();
+      }
+      break;
+  }
 };
 
 const countTotal = async () => {

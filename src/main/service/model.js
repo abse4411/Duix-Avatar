@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { isEmpty } from 'lodash'
 import { insert, selectPage, count, selectByID, remove as deleteModel } from '../dao/f2f-model.js'
 import { train as trainVoice } from './voice.js'
+import { addPreset } from './voice-preset.js'
 import { assetPath } from '../config/config.js'
 import log from '../logger.js'
 import { extractAudio, toH264 } from '../util/ffmpeg.js'
@@ -14,9 +15,10 @@ const MODEL_NAME = 'model'
  * 新增模特
  * @param {string} modelName 模特名称
  * @param {string} videoPath 模特视频路径
+ * @param {string} ttsService TTS服务类型: fish-speech | index-tts
  * @returns
  */
-async function addModel(modelName, videoPath) {
+async function addModel(modelName, videoPath, ttsService = 'fish-speech') {
   if (!fs.existsSync(assetPath.model)) {
     fs.mkdirSync(assetPath.model, {
       recursive: true
@@ -36,19 +38,27 @@ async function addModel(modelName, videoPath) {
     })
   }
   const audioPath = path.join(assetPath.ttsTrain, modelFileName.replace(extname, '.wav'))
-  return extractAudio(modelPath, audioPath).then(() => {
-    // 训练语音模型
-    const relativeAudioPath = path.relative(assetPath.ttsRoot, audioPath)
-    return trainVoice(relativeAudioPath, 'zh')
-  }).then((voiceId)=>{
-    // 插入模特信息
-    const relativeModelPath = path.relative(assetPath.model, modelPath)
-    const relativeAudioPath = path.relative(assetPath.ttsRoot, audioPath)
+  await extractAudio(modelPath, audioPath)
 
+  const relativeModelPath = path.relative(assetPath.model, modelPath)
+  const relativeAudioPath = path.relative(assetPath.ttsRoot, audioPath)
+
+  if (ttsService === 'index-tts') {
+    // Index-TTS2: 将提取的音频保存到音色管理
+    const voicePresetId = await addPreset({
+      name: modelName,
+      promptAudioPath: audioPath
+    })
+    // 插入模特信息，voiceId为空（使用Index-TTS2不需要fish-speech的voiceId）
+    const id = insert({ modelName, videoPath: relativeModelPath, audioPath: relativeAudioPath, voiceId: null, voicePresetId })
+    return id
+  } else {
+    // Fish-Speech: 训练语音模型（原有逻辑）
+    const voiceId = await trainVoice(relativeAudioPath, 'zh')
     // insert model info to db
     const id = insert({ modelName, videoPath: relativeModelPath, audioPath: relativeAudioPath, voiceId })
     return id
-  })
+  }
 }
 
 /**
@@ -122,8 +132,8 @@ function countModel(name = '') {
 }
 
 export function init() {
-  ipcMain.handle(MODEL_NAME + '/addModel', (event, ...args) => {
-    return addModel(...args)
+  ipcMain.handle(MODEL_NAME + '/addModel', (event, modelName, videoPath, ttsService) => {
+    return addModel(modelName, videoPath, ttsService)
   })
   ipcMain.handle(MODEL_NAME + '/addModelNoAudio', (event, ...args) => {
     return addModelNoAudio(...args)

@@ -12,6 +12,9 @@
           <img src="../../../assets/images/home/select.svg" />
         </template>
       </t-input>
+      <t-button theme="primary" class="add-works-btn" @click="linkRoute">
+        {{ $t('common.banner0.buttonText') }}
+      </t-button>
     </div>
     <div class="works-content-table">
       <div v-if="home.homeState.videoNum === 0" class="empty">
@@ -297,6 +300,10 @@ const downloadVideo = async (video) => {
     console.log(error)
   }
 }
+
+defineExpose({
+  videoPageAJax
+})
 </script>
 <style lang="less" scoped>
 .works-content-box {
@@ -306,10 +313,14 @@ const downloadVideo = async (video) => {
     position: absolute;
     top: -50px;
     right: 0;
+    align-items: center;
+    gap: 12px;
 
     .form-input {
       width: 216px;
-      margin-left: auto;
+    }
+    .add-works-btn {
+      flex-shrink: 0;
     }
   }
   .works-content-table {
