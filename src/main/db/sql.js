@@ -103,5 +103,11 @@ export default [
         script: `alter table video
                     add subtitle_path TEXT;
                 `
+    },
+    {
+        version: 8,
+        script: `alter table video
+                    add origin_file_path TEXT;
+                `
     }
 ]

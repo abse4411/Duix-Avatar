@@ -17,7 +17,8 @@ import { makeAudio4Video, copyAudio4Video } from './voice.js'
 import { makeAudioByIndexTTS } from './voice-preset.js'
 import { makeVideo as makeVideoApi,getVideoStatus } from '../api/f2f.js'
 import log from '../logger.js'
-import { getVideoDuration } from '../util/ffmpeg.js'
+import { getVideoDuration, burnSubtitle, detectAvailableEncoders, getEncoderLabel, renderSubtitleFrame } from '../util/ffmpeg.js'
+import fontList from 'font-list'
 
 const MODEL_NAME = 'video'
 
@@ -320,6 +321,121 @@ function saveSubtitle(videoId, srtContent) {
   return video.subtitle_path
 }
 
+/**
+ * 获取系统已安装字体列表
+ * @returns {Promise<string[]>} 字体名数组
+ */
+async function getSystemFonts() {
+  try {
+    const fonts = await fontList.getFonts()
+    return [...new Set(fonts)].sort()
+  } catch (err) {
+    log.error('获取系统字体失败:', err)
+    return []
+  }
+}
+
+/**
+ * 探测可用的 H.264 编码器（含硬件加速）
+ * @returns {Promise<Array<{value:string,label:string}>>}
+ */
+async function detectEncoders() {
+  const encoders = await detectAvailableEncoders()
+  return encoders.map((enc) => ({ value: enc, label: getEncoderLabel(enc) }))
+}
+
+/**
+ * 烧录 ASS 字幕到视频
+ * @param {number} videoId 视频ID
+ * @param {string} assContent ASS 字幕文本
+ * @param {object} options { encoder }
+ * @param {object} sender webContents 用于推送进度
+ * @returns {Promise<{file_path:string}>}
+ */
+async function burnVideoSubtitle(videoId, assContent, options = {}, sender) {
+  const video = selectVideoByID(videoId)
+  if (!video) throw new Error('视频不存在')
+  if (!video.file_path) throw new Error('视频文件不存在')
+
+  // 确定源视频路径（优先使用 origin_file_path 避免反复烧录导致字幕叠加）
+  let sourceFileName = video.file_path
+  if (video.origin_file_path) {
+    sourceFileName = video.origin_file_path
+  } else {
+    // 第一次烧录，保存原始视频路径
+    update({ id: videoId, origin_file_path: video.file_path })
+  }
+  const sourcePath = path.join(assetPath.model, sourceFileName)
+  if (!fs.existsSync(sourcePath)) throw new Error('源视频文件不存在: ' + sourcePath)
+
+  // 保存 ASS 文件
+  const assFileName = `${Date.now()}.ass`
+  const assPath = path.join(assetPath.ttsProduct, assFileName)
+  fs.writeFileSync(assPath, assContent, 'utf-8')
+
+  // 输出文件
+  const ext = path.extname(video.file_path) || '.mp4'
+  const outputFileName = `${Date.now()}_sub${ext}`
+  const outputPath = path.join(assetPath.model, outputFileName)
+
+  // 删除上一次烧录的视频文件（保留原始 origin_file_path）
+  if (video.origin_file_path && video.file_path !== video.origin_file_path) {
+    const oldPath = path.join(assetPath.model, video.file_path)
+    if (fs.existsSync(oldPath)) {
+      try { fs.unlinkSync(oldPath) } catch (e) { log.warn('删除旧视频失败:', e) }
+    }
+  }
+
+  log.info('~ burnVideoSubtitle ~ start:', sourcePath, '->', outputPath, 'encoder:', options.encoder)
+  // 烧录
+  await burnSubtitle(sourcePath, assPath, outputPath, {
+    encoder: options.encoder || 'libx264',
+    onProgress: (percent) => {
+      if (sender && !sender.isDestroyed()) {
+        sender.send(MODEL_NAME + '/burnProgress', { videoId, percent })
+      }
+    }
+  })
+
+  // 更新 video 记录指向新视频
+  update({ id: videoId, file_path: outputFileName })
+
+  // 清理 ASS 临时文件
+  try { fs.unlinkSync(assPath) } catch (e) { /* ignore */ }
+
+  return { file_path: outputFileName }
+}
+
+/**
+ * 渲染单帧带字幕的视频画面（用于预览）
+ * @param {number} videoId 视频ID
+ * @param {string} assContent ASS 字幕文本
+ * @param {number} timeSeconds 渲染时间点（秒）
+ * @returns {Promise<string>} 输出图片路径
+ */
+async function renderSubtitleFrameService(videoId, assContent, timeSeconds) {
+  const video = selectVideoByID(videoId)
+  if (!video) throw new Error('视频不存在')
+  const sourceFileName = video.origin_file_path || video.file_path
+  if (!sourceFileName) throw new Error('视频文件不存在')
+  const sourcePath = path.join(assetPath.model, sourceFileName)
+  if (!fs.existsSync(sourcePath)) throw new Error('源视频文件不存在: ' + sourcePath)
+
+  // 写临时 ASS 文件
+  const assPath = path.join(assetPath.ttsProduct, `preview_${videoId}.ass`)
+  fs.writeFileSync(assPath, assContent, 'utf-8')
+
+  // 输出 PNG（固定文件名，覆盖上一次的预览）
+  const outputPath = path.join(assetPath.ttsProduct, `preview_${videoId}.png`)
+
+  await renderSubtitleFrame(sourcePath, assPath, timeSeconds, outputPath)
+
+  // 清理 ASS 临时文件
+  try { fs.unlinkSync(assPath) } catch (e) { /* ignore */ }
+
+  return outputPath
+}
+
 export function init() {
   ipcMain.handle(MODEL_NAME + '/page', (event, ...args) => {
     return page(...args)
@@ -350,5 +466,17 @@ export function init() {
   })
   ipcMain.handle(MODEL_NAME + '/saveSubtitle', (event, ...args) => {
     return saveSubtitle(...args)
+  })
+  ipcMain.handle(MODEL_NAME + '/getSystemFonts', (event, ...args) => {
+    return getSystemFonts(...args)
+  })
+  ipcMain.handle(MODEL_NAME + '/detectEncoders', (event, ...args) => {
+    return detectEncoders(...args)
+  })
+  ipcMain.handle(MODEL_NAME + '/burnSubtitle', async (event, ...args) => {
+    return burnVideoSubtitle(args[0], args[1], args[2] || {}, event.sender)
+  })
+  ipcMain.handle(MODEL_NAME + '/renderFrame', async (event, ...args) => {
+    return renderSubtitleFrameService(args[0], args[1], args[2])
   })
 }

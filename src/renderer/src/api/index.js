@@ -32,6 +32,29 @@ export function saveSubtitle(videoId, srtContent) {
   return window.electron.ipcRenderer.invoke('video/saveSubtitle', videoId, srtContent)
 }
 
+export function getSystemFonts() {
+  return window.electron.ipcRenderer.invoke('video/getSystemFonts')
+}
+
+export function detectEncoders() {
+  return window.electron.ipcRenderer.invoke('video/detectEncoders')
+}
+
+export function burnVideoSubtitle(videoId, assContent, encoder) {
+  return window.electron.ipcRenderer.invoke('video/burnSubtitle', videoId, assContent, { encoder })
+}
+
+export function renderSubtitleFrame(videoId, assContent, timeSeconds) {
+  return window.electron.ipcRenderer.invoke('video/renderFrame', videoId, assContent, timeSeconds)
+}
+
+export function onBurnProgress(callback) {
+  const off = window.electron.ipcRenderer.on('video/burnProgress', (event, data) => {
+    callback(data)
+  })
+  return off
+}
+
 export function modifyVideo(video) {
   return window.electron.ipcRenderer.invoke('video/modify', video)
 }
